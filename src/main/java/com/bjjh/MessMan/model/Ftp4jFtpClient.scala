@@ -9,4 +9,5 @@ class Ftp4jFtpClient {
   client.setCharset("utf-8")
 
   client.setType(FTPClient.TYPE_BINARY)
+
 }
