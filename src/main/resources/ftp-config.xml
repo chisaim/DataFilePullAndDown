@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ftp-config>
+    <ftp-server>192.168.102.117</ftp-server>
+    <ftp-port>21</ftp-port>
+    <ftp-user>userftp</ftp-user>
+    <ftp-passwd>userftp</ftp-passwd>
+
+    <data-file-source-location></data-file-source-location>
+
+    <data-file-target-location></data-file-target-location>
+
+</ftp-config>
