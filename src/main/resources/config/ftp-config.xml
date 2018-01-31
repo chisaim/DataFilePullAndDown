@@ -5,7 +5,7 @@
     <ftp-user>userftp</ftp-user>
     <ftp-passwd>userftp</ftp-passwd>
 
-    <data-file-source-location></data-file-source-location>
+    <data-file-source-location>/home/userftp/data</data-file-source-location>
 
     <data-file-target-location></data-file-target-location>
 

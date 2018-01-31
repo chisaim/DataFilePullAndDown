@@ -174,7 +174,7 @@
             </manifest>
             <manifestEntries>
               <Premain-Class>
-                com.bjjh.MessMan.main.App
+                com.bjjh.MessMan.main.main
               </Premain-Class>
             </manifestEntries>
           </archive>

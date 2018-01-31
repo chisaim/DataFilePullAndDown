@@ -50,34 +50,28 @@ class GetConfigMess {
     getElementTextValue(getConfigFileDocument(configFile.getDbConfigFile()), "dbPassword")
   }
 
-  def getMaster(): String = {
-    getElementTextValue(getConfigFileDocument(configFile.getOperationFile()), "master")
+  def getFTPServer():String = {
+    getElementTextValue(getConfigFileDocument(configFile.getFTPConfigFile()),"ftp-server")
   }
 
-  def getAppName(): String = {
-    getElementTextValue(getConfigFileDocument(configFile.getOperationFile()), "appName")
+  def getFTPPort():Int = {
+    Integer.parseInt(getElementTextValue(getConfigFileDocument(configFile.getFTPConfigFile()),"ftp-port"))
   }
 
-  def getTabName1():String ={
-    getElementTextValue(getConfigFileDocument(configFile.getDbConfigFile()), "StrategyTab")
+  def getFTPUser():String = {
+    getElementTextValue(getConfigFileDocument(configFile.getFTPConfigFile()),"ftp-user")
   }
 
-  def getTabName2():String ={
-    getElementTextValue(getConfigFileDocument(configFile.getDbConfigFile()), "MessageTab")
+  def getFTPPasswd():String = {
+    getElementTextValue(getConfigFileDocument(configFile.getFTPConfigFile()),"ftp-passwd")
   }
 
-  def getTab1col():String = {
-    getElementTextValue(getConfigFileDocument(configFile.getDbConfigFile()), "StrategyTab-col")
-  }
-  def getTab2col():String = {
-    getElementTextValue(getConfigFileDocument(configFile.getDbConfigFile()), "MessageTab-col")
+  def getDataFileSourceLocation():String = {
+    getElementTextValue(getConfigFileDocument(configFile.getFTPConfigFile()),"data-file-source-location")
   }
 
-  def getProp(): Properties = {
-    val prop = new Properties()
-    prop.setProperty("user",getDbUserName())
-    prop.setProperty("password",getDbPassword())
-    prop
+  def getDataFileTargetLocation():String = {
+    getElementTextValue(getConfigFileDocument(configFile.getFTPConfigFile()),"data-file-target-location")
   }
 
 }

@@ -5,11 +5,11 @@ class GetConfigFile {
   val configFilePath = new GetConfigFilePath()
 
   def getDbConfigFile() = {
-    configFilePath.getConfigPath() + "/dbConfig-env.xml"
+    configFilePath.getConfigPath() + "/db-config.xml"
   }
 
-  def getOperationFile() = {
-    configFilePath.getConfigPath() + "/operation-env.xml"
+  def getFTPConfigFile() = {
+    configFilePath.getConfigPath() + "/ftp-config.xml"
   }
 
 }
