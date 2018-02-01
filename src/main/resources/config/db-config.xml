@@ -1,9 +1,8 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8"?>
+
 <db-env>
     <driverClassName>com.mysql.jdbc.Driver</driverClassName>
     <dbUrl>jdbc:mysql://192.168.102.117:3306/site?characterEncoding=utf8&amp;allowMultiQueries=true&amp;useSSL=true</dbUrl>
     <dbUserName>chisaim</dbUserName>
     <dbPassword>chisaim</dbPassword>
-
-
 </db-env>

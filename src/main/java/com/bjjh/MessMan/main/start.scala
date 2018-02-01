@@ -1,8 +1,11 @@
 package com.bjjh.MessMan.main
 
-import it.sauronsoftware.ftp4j.FTPClient
+import it.sauronsoftware.ftp4j.{FTPClient, FTPFile}
+import org.apache.log4j.Logger
 
-object main {
+object start {
+
+  val logger = Logger.getLogger(start.getClass.getName)
 
   def main(args: Array[String]): Unit = {
 
@@ -13,6 +16,10 @@ object main {
     client.login("userftp", "userftp")
 
     println(client.currentDirectory())
+
+    val list = client.list()
   }
+
+
 
 }

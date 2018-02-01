@@ -2,34 +2,98 @@ package com.bjjh.MessMan.model
 
 import java.io.File
 
-import com.bjjh.MessMan.config.GetConfigMess
-import com.bjjh.MessMan.util.DefaultDataTransferListener
-import it.sauronsoftware.ftp4j.FTPClient
+import com.bjjh.MessMan.util.{DownloadDataTransferListener, UploadDataTransferListener}
+import it.sauronsoftware.ftp4j.{FTPClient, FTPFile}
 
 /**
-  * 主要创建和设定ftp客户端配置相关信息，并附加上传和下载方法。
+  * 自助封装了FTP工具的一部分方法。
   */
 class Ftp4jFtpClient {
+  /**
+    * 创建FTP客户端实例
+    *
+    * @return FTPClient
+    */
+  def getClientInstance(): FTPClient = {
+    new FTPClient
+  }
 
-  val client = new FTPClient
+  /**
+    * 获取FTP链接
+    *
+    * @param FtpServer 链接服务地址
+    * @param FTPPort   链接服务地址的端口号
+    */
+  def ftpConnect(FtpServer: String, FTPPort: Int): Unit = {
+    getClientInstance().connect(FtpServer, FTPPort)
+  }
 
-  val configMess = new GetConfigMess
+  /**
+    * 登录FTP服务器
+    *
+    * @param FtpUser   登录FTP服务器用户名
+    * @param FtpPasswd 登录FTP服务器密码
+    */
+  def ftpLogin(FtpUser: String, FtpPasswd: String): Unit = {
+    getClientInstance().login(FtpUser, FtpPasswd)
+  }
 
-  client.connect(configMess.getFTPServer(),configMess.getFTPPort())
+  /**
+    * 获取在FTP服务器登录后的当前位置
+    *
+    * @return
+    */
+  def getCurrentDirectory(): String = {
+    getClientInstance().currentDirectory()
+  }
 
-  client.login(configMess.getFTPUser(),configMess.getFTPPasswd())
+  /**
+    * 更改当前地址或访问其他地址
+    *
+    * @param path 输入地址
+    */
+  def ChangeDirectory(path: String): Unit = {
+    getClientInstance().changeDirectory(path)
+  }
 
-  client.setType(FTPClient.SECURITY_FTPS)
+  /**
+    * 判断当前访问地址下是否为空
+    * @param path 输入地址
+    * @return
+    */
+  def setPathGetListIsEmpty(path: String): Boolean = {
+    ChangeDirectory(path)
+    getClientInstance().list().isEmpty
+  }
 
-  println(client.currentDirectory())
+  /**
+    * 获取当前访问地址下的目录文档和链接
+    *
+    * @param path 输入地址
+    * @return
+    */
+  def setPathGetFileList(path: String): Array[FTPFile] = {
+    ChangeDirectory(path)
+    getClientInstance().list()
+  }
 
-  client.changeDirectory(configMess.getDataFileSourceLocation())
+  /**
+    * 上传文件
+    * @param sourceFilePath 上传文件位置
+    * @param FileName 上传文件名
+    */
+  def uploadFile(sourceFilePath: String, FileName: String): Unit = {
+    getClientInstance().upload(new File(sourceFilePath + FileName), new UploadDataTransferListener())
+  }
 
-  println(client.currentDirectory())
-
-  def unFile() : Unit = {
-    client.upload(new File("D:\\Download\\data"),new DefaultDataTransferListener())
-
+  /**
+    * 下载文件
+    * @param sourceFilePath 下载文件的路径
+    * @param targetFilePath 下载文件到何路径
+    * @param FileName 下载的文件名
+    */
+  def downloadFile(sourceFilePath: String, targetFilePath: String, FileName: String): Unit = {
+    getClientInstance().download(sourceFilePath+FileName, new File(targetFilePath + FileName), new DownloadDataTransferListener)
   }
 
 }

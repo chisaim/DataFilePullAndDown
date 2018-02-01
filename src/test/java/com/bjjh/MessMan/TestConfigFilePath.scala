@@ -2,8 +2,8 @@ package com.bjjh.MessMan
 
 import java.io.File
 
-import com.bjjh.MessMan.config.{GetConfigFile, GetConfigFilePath, GetConfigMess}
-import com.bjjh.MessMan.util.DefaultDataTransferListener
+import com.bjjh.MessMan.config.GetConfigMess
+import com.bjjh.MessMan.util.{DownloadDataTransferListener, UploadDataTransferListener}
 import it.sauronsoftware.ftp4j.FTPClient
 
 object TestConfigFilePath {
@@ -26,7 +26,9 @@ object TestConfigFilePath {
 
     println(client.currentDirectory())
 
-    client.upload(new File("D:\\Download\\data"),new DefaultDataTransferListener)
+//    client.upload(new File("D:\\Download\\data"),new UploadDataTransferListener)
+
+    client.download("/home/userftp/DataFilePullAndDown_jar/config/ftp-config.xml",new File("D:\\Tools\\ftp-config.xml"),new DownloadDataTransferListener)
 
   }
 
