@@ -22,7 +22,7 @@ object TestConfigFilePath {
 
     println(client.currentDirectory())
 
-    client.changeDirectory(configMess.getDataFileSourceLocation())
+    client.changeDirectory(configMess.getFTPFileSourceLocation())
 
     println(client.currentDirectory())
 

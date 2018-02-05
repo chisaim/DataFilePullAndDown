@@ -5,11 +5,18 @@ class GetConfigFile {
   val configFilePath = new GetConfigFilePath()
 
   def getDbConfigFile() = {
-    configFilePath.getConfigPath() + "/db-config.xml"
+    configFilePath.getMainPath() + "/db-config.xml"
+//    "classpath*:db-config.xml"
   }
 
   def getFTPConfigFile() = {
-    configFilePath.getConfigPath() + "/ftp-config.xml"
+    configFilePath.getMainPath() + "/ftp-config.xml"
+//    "classpath*:ftp-config.xml"
+  }
+
+  def getHDFSConfigFile() = {
+    configFilePath.getMainPath() + "/hadoop-config.xml"
+//    "classpath*:hadoop-config.xml"
   }
 
 }

@@ -1,9 +1,8 @@
 package com.bjjh.MessMan.config
 
-import java.util.Properties
-
 import org.dom4j.io.SAXReader
 import org.dom4j.{Document, Element}
+import java.lang.Long
 
 class GetConfigMess {
 
@@ -66,12 +65,32 @@ class GetConfigMess {
     getElementTextValue(getConfigFileDocument(configFile.getFTPConfigFile()),"ftp-passwd")
   }
 
-  def getDataFileSourceLocation():String = {
+  def getFTPFileSourceLocation():String = {
     getElementTextValue(getConfigFileDocument(configFile.getFTPConfigFile()),"data-file-source-location")
   }
 
-  def getDataFileTargetLocation():String = {
+  def getFTPFileTargetLocation():String = {
     getElementTextValue(getConfigFileDocument(configFile.getFTPConfigFile()),"data-file-target-location")
+  }
+
+  def getScanTime():Long = {
+    Long.parseLong(getElementTextValue(getConfigFileDocument(configFile.getFTPConfigFile()),"scan-time"))
+  }
+
+  def getHDFSURI():String = {
+    getElementTextValue(getConfigFileDocument(configFile.getHDFSConfigFile()),"uri")
+  }
+
+  def getHdfsUserName():String = {
+    getElementTextValue(getConfigFileDocument(configFile.getHDFSConfigFile()),"hdfsUserName")
+  }
+
+  def uploadFileFromHDFS():String = {
+    getElementTextValue(getConfigFileDocument(configFile.getHDFSConfigFile()),"data-file-source-location")
+  }
+
+  def downloadFileFromHDFS():String = {
+    getElementTextValue(getConfigFileDocument(configFile.getHDFSConfigFile()),"data-file-target-location")
   }
 
 }
