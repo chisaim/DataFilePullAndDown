@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<hadoop-env>
+    <uri>HDFS://192.168.102.75:9000</uri>
+    <hdfsUserName>hadoop</hdfsUserName>
+    <data-file-source-location>/home/userftp/data</data-file-source-location>
+    <data-file-target-location>D:\Tools</data-file-target-location>
+</hadoop-env>
