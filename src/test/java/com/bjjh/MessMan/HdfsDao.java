@@ -49,6 +49,7 @@ class HdfsDAO {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+/*
 
         Path path = new Path("/abc");
 
@@ -57,6 +58,7 @@ class HdfsDAO {
         } catch (IOException e) {
             e.printStackTrace();
         }
+*/
 
 /*
         Path HDFSPath = new Path("/data/new.txt");

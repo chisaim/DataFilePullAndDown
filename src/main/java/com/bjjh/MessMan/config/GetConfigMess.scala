@@ -1,8 +1,12 @@
 package com.bjjh.MessMan.config
 
+import java.io.File
+
 import org.dom4j.io.SAXReader
 import org.dom4j.{Document, Element}
 import java.lang.Long
+import java.text.SimpleDateFormat
+import java.util.Date
 
 class GetConfigMess {
 
@@ -92,5 +96,11 @@ class GetConfigMess {
   def downloadFileFromHDFS():String = {
     getElementTextValue(getConfigFileDocument(configFile.getHDFSConfigFile()),"data-file-target-location")
   }
+
+  def getTimestamp():String = {
+    File.separator + new SimpleDateFormat("yyyyMMddHHmm").format(new Date)
+  }
+
+
 
 }

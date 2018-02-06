@@ -1,7 +1,10 @@
 package com.bjjh.MessMan
 
+import java.text.SimpleDateFormat
+
 import com.bjjh.MessMan.model.TaskMess
 import com.bjjh.MessMan.util.JdbcUtil
+import java.util.Date
 
 object TestJdbc {
 
@@ -14,5 +17,9 @@ object TestJdbc {
     jdbcutil.insert()
 
     jdbcutil.AutoCommitTransaction(true)
+
+    val sdf = new SimpleDateFormat("yyyyMMddHHmm").format(new Date)
+
+    println(sdf)
   }
 }

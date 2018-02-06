@@ -39,6 +39,6 @@ class JdbcUtil {
   }
 
   def AutoCommitTransaction(AutoCommitFlag:Boolean):Unit = {
-    getConnection().setAutoCommit(AutoCommitFlag)
+    getConnection().setAutoCommit(true)
   }
 }

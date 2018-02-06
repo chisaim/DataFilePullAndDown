@@ -14,24 +14,6 @@ public class HdfsDAO {
 
     private Logger logger = Logger.getLogger(HdfsDAO.class);
 
-    GetConfigMess getConfigMess = new GetConfigMess();
-
-    public FileSystem getHadoopFileSystem(){
-
-        FileSystem fs = null;
-        try {
-            fs = FileSystem.get(URI.create(getConfigMess.getHDFSURI()),new Configuration(),getConfigMess.getHdfsUserName());
-        } catch (IOException e) {
-            e.printStackTrace();
-            logger.error(e);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-            logger.error(e);
-        }
-
-        return fs;
-    }
-
     public boolean createPath(FileSystem fs,String uri){
 
         boolean b = false;
