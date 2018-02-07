@@ -3,6 +3,8 @@
 <db-env>
     <driverClassName>com.mysql.jdbc.Driver</driverClassName>
     <dbUrl>jdbc:mysql://192.168.102.117:3306/site?characterEncoding=utf8&amp;allowMultiQueries=true&amp;useSSL=true</dbUrl>
-    <dbUserName>chisaim</dbUserName>
-    <dbPassword>chisaim</dbPassword>
+    <dbUserName>root</dbUserName>
+    <dbPassword>bjjh123</dbPassword>
+
+    <dataFileOutputPath>/tmp</dataFileOutputPath>
 </db-env>

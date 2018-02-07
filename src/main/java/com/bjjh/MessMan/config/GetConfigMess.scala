@@ -53,6 +53,10 @@ class GetConfigMess {
     getElementTextValue(getConfigFileDocument(configFile.getDbConfigFile()), "dbPassword")
   }
 
+  def getDataFileOutputPath() : String = {
+    getElementTextValue(getConfigFileDocument(configFile.getDbConfigFile()), "dataFileOutputPath")
+  }
+
   def getFTPServer():String = {
     getElementTextValue(getConfigFileDocument(configFile.getFTPConfigFile()),"ftp-server")
   }

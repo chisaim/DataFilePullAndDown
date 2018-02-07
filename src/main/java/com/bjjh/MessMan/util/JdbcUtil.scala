@@ -1,5 +1,6 @@
 package com.bjjh.MessMan.util
 
+import java.io.File
 import java.sql.{Connection, DriverManager, PreparedStatement, ResultSet}
 
 import com.bjjh.MessMan.config.GetConfigMess
@@ -15,27 +16,31 @@ class JdbcUtil {
 
   val configMess = new GetConfigMess
 
-  val taskMess = new TaskMess
-
   Class.forName(configMess.getDriverClassName()).newInstance()
 
   def getConnection() : Connection = {
     DriverManager.getConnection(configMess.getDBUrl(),configMess.getDbUserName(),configMess.getDbPassword())
   }
 
-  def insert() : Unit = {
-    val exceSql = "insert into site.taskMessTable (taskID,keywordNum,messageNum,startTime,endTime,elapsedTime) values (?,?,?,?,?,?)"
+  def insert(taskMess: TaskMess) : Unit = {
+    val exceSql = "insert into site.mession (filename,filesize,exceTaskTimeAndDate,upOrDownloadFlag) values (?,?,?,?)"
     val ptst = getConnection().prepareStatement(exceSql)
-    ptst.setNString(1,taskMess.getTaskTimeAndDate)
-    ptst.setNString(2,"1")
-    ptst.setNString(3,"1")
-    ptst.setNString(4,"1")
-    ptst.setNString(5,"1")
-    ptst.setNString(6,"1")
+    ptst.setNString(1,taskMess.getFilename)
+    ptst.setNString(2,taskMess.getFileSize)
+    ptst.setNString(3,taskMess.getTaskTimeAndDate)
+    ptst.setNString(4,taskMess.getUpOrDownloadFlag)
     ptst.executeUpdate()
     ptst.close()
     getConnection().close()
 
+  }
+
+  def output(path:String,filename:String):Unit = {
+    val ptst = getConnection().prepareStatement("select * from site.taskMessTable into outfile '" + path + "/" + filename + "'")
+//    val ptst = getConnection().prepareStatement("select * from site.taskMessTable into outfile '/tmp/a.txt'")
+    ptst.execute()
+    ptst.close()
+    getConnection().close()
   }
 
   def AutoCommitTransaction(AutoCommitFlag:Boolean):Unit = {

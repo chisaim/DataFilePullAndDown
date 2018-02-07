@@ -1,15 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="PublishConfigData" serverName="runjarenv">
+  <component name="PublishConfigData" serverName="192.168.102.117(useftp)">
     <serverData>
-      <paths name="runjarenv">
+      <paths name="192.168.102.117(root)">
+        <serverdata>
+          <mappings>
+            <mapping local="$PROJECT_DIR$" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
+      <paths name="192.168.102.117(useftp)">
         <serverdata>
           <mappings>
             <mapping deploy="/" local="$PROJECT_DIR$/out/artifacts" web="/" />
           </mappings>
         </serverdata>
       </paths>
-      <paths name="testHdfs">
+      <paths name="192.168.102.75(hadoop)">
         <serverdata>
           <mappings>
             <mapping local="$PROJECT_DIR$" web="/" />

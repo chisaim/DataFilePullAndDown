@@ -12,11 +12,9 @@ object TestJdbc {
 
   val taskMess = new TaskMess
 
+  val taskMessLog = new TaskMess
+
   def main(args: Array[String]): Unit = {
-
-    jdbcutil.insert()
-
-    jdbcutil.AutoCommitTransaction(true)
 
     val sdf = new SimpleDateFormat("yyyyMMddHHmm").format(new Date)
 

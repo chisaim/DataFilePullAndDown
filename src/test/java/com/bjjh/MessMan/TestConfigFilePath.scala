@@ -27,11 +27,11 @@ object TestConfigFilePath {
       list.getType
     }
 
-    client.changeDirectory(configMess.getFTPFileSourceLocation())
+//    client.changeDirectory(configMess.getFTPFileSourceLocation())
 
-    println(client.currentDirectory())
+    println(new File("D:\\Download\\data").getUsableSpace)
 
-    ftpClient.downloadFile(client,"123.txt",configMess.getFTPFileTargetLocation(),"123.txt")
+//    ftpClient.downloadFile(client,"123.txt",configMess.getFTPFileTargetLocation(),"123.txt")
 
 //    client.upload(new File("D:\\Download\\data"),new UploadDataTransferListener)
 

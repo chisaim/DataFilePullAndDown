@@ -2,7 +2,7 @@
 <project version="4">
   <component name="WebServers">
     <option name="servers">
-      <webServer id="a7b56131-f2d8-46a0-84fa-b0af46599ddc" name="runjarenv" url="http://192.168.102.117">
+      <webServer id="a7b56131-f2d8-46a0-84fa-b0af46599ddc" name="192.168.102.117(useftp)" url="http://192.168.102.117">
         <fileTransfer host="192.168.102.117" port="22" rootFolder="/home/userftp" accessType="SFTP">
           <advancedOptions>
             <advancedOptions dataProtectionLevel="Private" />
@@ -10,8 +10,16 @@
           <option name="port" value="22" />
         </fileTransfer>
       </webServer>
-      <webServer id="3c26c5bb-e9de-49e2-bfe5-e7677dda70a6" name="testHdfs" url="http://192.168.102.75">
+      <webServer id="3c26c5bb-e9de-49e2-bfe5-e7677dda70a6" name="192.168.102.75(hadoop)" url="http://192.168.102.75">
         <fileTransfer host="192.168.102.75" port="22" accessType="SFTP">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" />
+          </advancedOptions>
+          <option name="port" value="22" />
+        </fileTransfer>
+      </webServer>
+      <webServer id="ed7c5276-54dd-43fa-b337-418d3b03ac4f" name="192.168.102.117(root)" url="http://192.168.102.117">
+        <fileTransfer host="192.168.102.117" port="22" accessType="SFTP">
           <advancedOptions>
             <advancedOptions dataProtectionLevel="Private" />
           </advancedOptions>
