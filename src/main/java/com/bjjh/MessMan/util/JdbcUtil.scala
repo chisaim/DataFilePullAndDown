@@ -36,9 +36,25 @@ class JdbcUtil {
   }
 
   def output(path:String,filename:String):Unit = {
-    val ptst = getConnection().prepareStatement("select * from site.taskMessTable into outfile '" + path + "/" + filename + "'")
-//    val ptst = getConnection().prepareStatement("select * from site.taskMessTable into outfile '/tmp/a.txt'")
+    val sql = "SELECT *  INTO OUTFILE '" + path + "/" + filename + "' fields TERMINATED BY '\t' OPTIONS ENCLOSED BY '' lines TERMINATED BY '\n' FROM site.taskMessTable"
+    val ptst = getConnection().prepareStatement(sql)
     ptst.execute()
+    ptst.close()
+    getConnection().close()
+  }
+
+  def loadDataFile(path:String,filename:String): Unit ={
+    val sql = "LOAD DATA INFILE '" + path + "/" + filename + "' INTO TABLE site.taskMessTable fields TERMINATED BY '\t' OPTIONS ENCLOSED BY '' LINES TERMINATED BY '\n'"
+    val ptst = getConnection().prepareStatement(sql)
+    ptst.execute()
+    ptst.close()
+    getConnection().close()
+  }
+
+  def updateCol(): Unit ={
+    val sql = "UPDATE site.employee AS T,(SELECT dept_id FROM site.department) AS S SET T.email = '944125621@qq.com' WHERE S.dept_id = T.dept_id AND T.employee_id = '26'"
+    val ptst = getConnection().prepareStatement(sql)
+    ptst.executeUpdate()
     ptst.close()
     getConnection().close()
   }
