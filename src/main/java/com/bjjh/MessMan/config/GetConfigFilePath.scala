@@ -4,7 +4,7 @@ class GetConfigFilePath {
 
   def getMainPath() = {
 
-    System.getProperty("user.dir") + "/src/main/resources"
+    System.getProperty("user.dir")
   }
 
   def getConfigPath() = {

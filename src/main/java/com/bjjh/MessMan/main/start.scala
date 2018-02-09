@@ -30,7 +30,9 @@ object start {
 
   def main(args: Array[String]): Unit = {
 
-    //    开始第一阶段执行，内容是到FTP服务器的固定路径下载数据文件放入固定位置然后再上传到hadoop的HDFS上面。
+    /**
+      * 开始第一阶段执行，内容是到FTP服务器的固定路径下载数据文件放入固定位置然后再上传到hadoop的HDFS上面。
+      */
     logger.info("====================mession start ...====================")
 
     logger.info("The FTP tool starts to connect. ...")
@@ -46,19 +48,6 @@ object start {
     logger.info("The database is successfully connected.")
 
     client.setType(FTPClient.TYPE_BINARY)
-
-    excefirst()
-
-    excesecond()
-
-    excethrid()
-
-  }
-
-  /**
-    * 开始第一阶段执行，内容是到FTP服务器的固定路径下载数据文件放入固定位置然后再上传到hadoop的HDFS上面。
-    */
-  def excefirst(): Unit = {
 
     logger.info(
       "It has switched to position ==>" + client.changeDirectory(
@@ -123,10 +112,60 @@ object start {
                   configMess.getTimestamp() + File.separator + file.getName)
               )
               logger.info("The data has been uploaded to HDFS.")
+              fs.close()
+              logger.info("HDFS closed.")
             }
           }
         }
       }
+
+      /** 第一阶段结束 */
+
+      /**
+        * 开始第二阶段执行，内容是将配置好的表数据导出到数据文件中，然后将其上传搭配FTP服务器的固定路径上。
+        */
+      //导出数据文件到指定目录
+      val filename = (configMess.getTimestamp() + "_file.txt")
+        .substring(1, (configMess.getTimestamp() + "_file.txt").size)
+      //      if (new File(configMess.getDataFileOutputPath() + filename).exists()) {
+      //        new File(configMess.getDataFileOutputPath() + filename).delete()
+      //      }
+      util.output(configMess.getDataFileOutputPath(), filename)
+      logger.info(
+        "Successfully export data files ==> " + filename + " to ==> " + configMess
+          .getDataFileOutputPath() + ". ")
+
+      //切换目录之后将数据库导出的数据文件上传FTP服务器
+      client.changeDirectory(configMess.getFTPFileSourceLocation())
+      logger.info(
+        "It has switched to position ==> " + client.changeDirectory(
+          configMess.getFTPFileSourceLocation()) + configMess
+          .getFTPFileSourceLocation())
+      ftpClient.uploadFile(client, configMess.getDataFileOutputPath(), filename)
+      logger.info("The file ==> " + filename + " has been successfully uploaded.")
+
+      //记录文件上传日志
+      taskMessLog.setFilename(filename)
+      taskMessLog.setFileSize(
+        new File(configMess.getFTPFileSourceLocation() + filename).getUsableSpace)
+      taskMessLog.setUpOrDownloadFlag(1) //文件上传
+      util.insert(taskMessLog)
+      logger.info("The file transfer log has been recorded.")
+
+      /** 第二阶段结束 */
+
+      /**
+        * 到指定位置下去加载数据文件到数据库，然后根据加载的数据更新表内容
+        */
+      //    数据库到指定位置去加载数据文件
+      util.loadDataFile(configMess.getDataFileOutputPath(), filename)
+      logger.info("Database load data file " + filename + " complete.")
+
+      //将数据内容加载到新表，关联相关ID，更新其数据状态
+      util.updateCol()
+      logger.info("Updating the data table state has been completed.")
+
+      /** 第三阶段结束 */
       //依靠配置时间来控制循环频率
       Thread.sleep(configMess.getScanTime())
       logger.info(
@@ -134,57 +173,6 @@ object start {
     }
   }
 
-  /*第一阶段结束*/
-  /**
-    * 开始第二阶段执行，内容是将配置好的表数据导出到数据文件中，然后将其上传搭配FTP服务器的固定路径上。
-    */
-  def excesecond(): Unit = {
-    //导出数据文件到指定目录
-    val filename = (configMess.getTimestamp() + "_file.txt")
-      .substring(1, (configMess.getTimestamp() + "_file.txt").size)
-    if (new File(configMess.getDataFileOutputPath() + filename).exists()) {
-      new File(configMess.getDataFileOutputPath() + filename).delete()
-    } else {
-      util.output(configMess.getDataFileOutputPath(), filename)
-    }
-    logger.info(
-      "Successfully export data files ==> " + filename + " to ==> " + configMess
-        .getDataFileOutputPath() + ". ")
 
-    //切换目录之后将数据库导出的数据文件上传FTP服务器
-    client.changeDirectory(configMess.getFTPFileSourceLocation())
-    logger.info(
-      "It has switched to position ==> " + client.changeDirectory(
-        configMess.getFTPFileSourceLocation()) + configMess
-        .getFTPFileSourceLocation())
-    //    ftpClient.uploadFile(client,configMess.getDataFileOutputPath(),filename)
-    logger.info("The file ==> " + filename + " has been successfully uploaded.")
-
-    //记录文件上传日志
-    taskMessLog.setFilename(filename)
-    taskMessLog.setFileSize(
-      new File(configMess.getFTPFileSourceLocation() + filename).getUsableSpace)
-    taskMessLog.setUpOrDownloadFlag(1) //文件上传
-    util.insert(taskMessLog)
-    logger.info("The file transfer log has been recorded.")
-
-  }
-
-  /*第二阶段结束*/
-  /**
-    * 到指定位置下去加载数据文件到数据库，然后根据加载的数据更新表内容
-    */
-  def excethrid(): Unit = {
-    //    数据库到指定位置去加载数据文件
-    val filename = (configMess.getTimestamp() + "_file.txt")
-      .substring(1, (configMess.getTimestamp() + "_file.txt").size)
-    util.loadDataFile(configMess.getDataFileOutputPath(), filename)
-    logger.info("Database load data file " + filename + " complete.")
-
-    //将数据内容加载到新表，关联相关ID，更新其数据状态
-    util.updateCol()
-    logger.info("Updating the data table state has been completed.")
-  }
-
-  /*第三阶段结束*/
 }
+

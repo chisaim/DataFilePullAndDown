@@ -36,7 +36,7 @@ class JdbcUtil {
   }
 
   def output(path:String,filename:String):Unit = {
-    val sql = "SELECT *  INTO OUTFILE '" + path + "/" + filename + "' fields TERMINATED BY '\t' OPTIONS ENCLOSED BY '' lines TERMINATED BY '\n' FROM site.taskMessTable"
+    val sql = "SELECT *  INTO OUTFILE '" + path + "/" + filename + "' fields TERMINATED BY '\t' OPTIONALLY ENCLOSED BY '' lines TERMINATED BY '\n' FROM site.taskMessTable"
     val ptst = getConnection().prepareStatement(sql)
     ptst.execute()
     ptst.close()
@@ -44,7 +44,7 @@ class JdbcUtil {
   }
 
   def loadDataFile(path:String,filename:String): Unit ={
-    val sql = "LOAD DATA INFILE '" + path + "/" + filename + "' INTO TABLE site.taskMessTable fields TERMINATED BY '\t' OPTIONS ENCLOSED BY '' LINES TERMINATED BY '\n'"
+    val sql = "LOAD DATA INFILE '" + path + "/" + filename + "' INTO TABLE site.taskMessTable fields TERMINATED BY '\t' OPTIONALLY ENCLOSED BY '' LINES TERMINATED BY '\n'"
     val ptst = getConnection().prepareStatement(sql)
     ptst.execute()
     ptst.close()

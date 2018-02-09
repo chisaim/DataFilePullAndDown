@@ -8,6 +8,7 @@ import java.io.OutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import com.bjjh.MessMan.config.GetConfigMess;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.BlockLocation;
 import org.apache.hadoop.fs.FSDataInputStream;
@@ -32,7 +33,7 @@ class HdfsDAO {
 
         Configuration configuration = new Configuration();
 
-//        configuration.set("fs.defaultFS", "hdfs://192.168.102.75:9000");
+        GetConfigMess configMess = new GetConfigMess();
 
         URI uri = null;
 
@@ -60,7 +61,6 @@ class HdfsDAO {
         }
 */
 
-/*
         Path HDFSPath = new Path("/data/new.txt");
         Path LocalPath = new Path("D:\\Download\\SogouQ3.txt\\new.txt");
 
@@ -75,7 +75,6 @@ class HdfsDAO {
                 e.printStackTrace();
             }
         }
-*/
 
 
     }

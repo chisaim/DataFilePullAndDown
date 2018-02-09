@@ -5,6 +5,6 @@
     <ftp-user>userftp</ftp-user>
     <ftp-passwd>userftp</ftp-passwd>
     <data-file-source-location>/home/userftp/data</data-file-source-location>
-    <data-file-target-location>D:\Tools</data-file-target-location>
+    <data-file-target-location>/home/userftp/ftpdir/down</data-file-target-location>
     <scan-time>5000</scan-time>
 </ftp-config>

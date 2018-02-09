@@ -6,5 +6,6 @@
     <dbUserName>root</dbUserName>
     <dbPassword>bjjh123</dbPassword>
 
-    <dataFileOutputPath>/tmp</dataFileOutputPath>
+    <dataFileOutputPath>/home/userftp/mysql/in</dataFileOutputPath>
+    <dataFileInputPath>/home/userftp/mysql/out</dataFileInputPath>
 </db-env>
