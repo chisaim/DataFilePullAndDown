@@ -3,9 +3,9 @@
 <db-env>
     <driverClassName>com.mysql.jdbc.Driver</driverClassName>
     <dbUrl>jdbc:mysql://192.168.102.117:3306/site?characterEncoding=utf8&amp;allowMultiQueries=true&amp;useSSL=true</dbUrl>
-    <dbUserName>root</dbUserName>
-    <dbPassword>bjjh123</dbPassword>
+    <dbUserName>mysql</dbUserName>
+    <dbPassword>mysql</dbPassword>
 
-    <dataFileOutputPath>/home/userftp/mysql/in</dataFileOutputPath>
-    <dataFileInputPath>/home/userftp/mysql/out</dataFileInputPath>
+    <dataFileOutputPath>/mysql/data/out</dataFileOutputPath>
+    <dataFileInputPath>/mysql/data/in</dataFileInputPath>
 </db-env>

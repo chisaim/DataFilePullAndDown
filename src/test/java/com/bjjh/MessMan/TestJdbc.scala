@@ -23,7 +23,7 @@ object TestJdbc {
 
 //    val sdf = new SimpleDateFormat("yyyyMMddHHmm").format(new Date)
 
-//    jdbcutil.output(configMess.getDataFileOutputPath(),filename)
-    jdbcutil.loadDataFile(configMess.getDataFileOutputPath(),filename)
+    jdbcutil.output(configMess.getDataFileOutputPath(),filename)
+//    jdbcutil.loadDataFile(configMess.getDataFileOutputPath(),filename)
   }
 }
