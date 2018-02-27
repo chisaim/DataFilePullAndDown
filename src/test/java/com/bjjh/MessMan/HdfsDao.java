@@ -8,7 +8,6 @@ import java.io.OutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import com.bjjh.MessMan.config.GetConfigMess;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.BlockLocation;
 import org.apache.hadoop.fs.FSDataInputStream;
@@ -32,8 +31,6 @@ class HdfsDAO {
         String hdfsUserName = "hadoop";
 
         Configuration configuration = new Configuration();
-
-        GetConfigMess configMess = new GetConfigMess();
 
         URI uri = null;
 

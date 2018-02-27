@@ -20,6 +20,7 @@
       <library>
         <CLASSES>
           <root url="jar://D:/Download/ftp4j-1.7.2.jar!/" />
+          <root url="jar://$USER_HOME$/Tools/jar/ftp4j-1.7.2.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
