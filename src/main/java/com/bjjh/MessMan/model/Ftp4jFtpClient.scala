@@ -19,6 +19,7 @@ class Ftp4jFtpClient {
   def uploadFile(client: FTPClient, sourceFilePath: String, FileName: String): Boolean = {
     client.upload(new File(sourceFilePath + File.separator + FileName), new UploadDataTransferListener())
     true
+
   }
 
   /**

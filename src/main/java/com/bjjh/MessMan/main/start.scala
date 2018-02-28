@@ -35,25 +35,25 @@ object start {
       */
     logger.info("====================mession start ...====================")
 
-    logger.info("The FTP tool starts to connect. ...")
-    client.connect(configMess.getFTPServer(), configMess.getFTPPort())
-    logger.info("FTP tool connection successful.")
-
-    logger.info("The FTP tool login begins ...")
-    client.login(configMess.getFTPUser(), configMess.getFTPPasswd())
-    logger.info("FTP tool login successful.")
-
-    logger.info("The database connection begins to connect...")
-    util.getConnection()
-    logger.info("The database is successfully connected.")
-
-    client.setType(FTPClient.TYPE_BINARY)
-
-    logger.info(
-      "It has switched to position ==>" + client.changeDirectory(
-        configMess.getFTPFileSourceLocation()) + configMess
-        .getFTPFileSourceLocation())
     while (true) {
+      logger.info("The FTP tool starts to connect. ...")
+      client.connect(configMess.getFTPServer(), configMess.getFTPPort())
+      logger.info("FTP tool connection successful.")
+
+      logger.info("The FTP tool login begins ...")
+      client.login(configMess.getFTPUser(), configMess.getFTPPasswd())
+      logger.info("FTP tool login successful.")
+
+      logger.info("The database connection begins to connect...")
+      util.getConnection()
+      logger.info("The database is successfully connected.")
+
+      client.setType(FTPClient.TYPE_BINARY)
+
+      logger.info(
+        "It has switched to position ==>" + client.changeDirectory(
+          configMess.getFTPFileSourceLocation()) + configMess
+          .getFTPFileSourceLocation())
       //扫描当前路径下的文件，空就继续扫描。
       logger.info(
         "Start scanning the file under this path:" + client.currentDirectory())
@@ -94,27 +94,35 @@ object start {
             val fs = FileSystem.get(URI.create(configMess.getHDFSURI),
               new Configuration,
               configMess.getHdfsUserName)
+
+
+            //在简短时间下检查HDFS中是否存在相同文件，存在且删除
             if (fs.exists(new Path(
               configMess.getTimestamp() + File.separator + file.getName))) {
-              logger.error(
+              logger.warn(
                 "There are already files ==>" + configMess
                   .getTimestamp() + File.separator + file.getName + " in HDFS.")
-            } else {
-              //在HDFS上创建时间戳路径
-              fs.mkdirs(new Path(configMess.getTimestamp()))
-              logger.info("Successfully create a date directory in HDFS.")
-              //将文件上传到HDFS上面。
-              fs.copyFromLocalFile(
-                new Path(
-                  configMess.getFTPFileTargetLocation() + configMess
-                    .getTimestamp() + File.separator + file.getName),
-                new Path(
-                  configMess.getTimestamp() + File.separator + file.getName)
-              )
-              logger.info("The data has been uploaded to HDFS.")
-              fs.close()
-              logger.info("HDFS closed.")
+              fs.delete(new Path(
+                configMess.getTimestamp() + File.separator + file.getName), false)
+              logger.warn("HDFS" + new Path(
+                configMess.getTimestamp() + File.separator + file.getName) + " has been deleted.")
             }
+            //在HDFS上创建时间戳路径
+            fs.mkdirs(new Path(configMess.getTimestamp()))
+            logger.info("Successfully create a date directory in HDFS.")
+            //将文件上传到HDFS上面。
+            fs.copyFromLocalFile(
+              new Path(
+                configMess.getFTPFileTargetLocation() + configMess
+                  .getTimestamp() + File.separator + file.getName),
+              new Path(
+                configMess.getTimestamp() + File.separator + file.getName)
+            )
+            logger.info("The data has been uploaded to HDFS.")
+            fs.close()
+            logger.info("HDFS closed.")
+            logger.info("====================The first phase is over.====================")
+
           }
         }
       }
@@ -127,9 +135,13 @@ object start {
       //导出数据文件到指定目录
       val filename = (configMess.getTimestamp() + "_file.txt")
         .substring(1, (configMess.getTimestamp() + "_file.txt").size)
-      //      if (new File(configMess.getDataFileOutputPath() + filename).exists()) {
-      //        new File(configMess.getDataFileOutputPath() + filename).delete()
-      //      }
+
+      val dataFile = new File(configMess.getDataFileOutputPath() + File.separator + filename)
+      //在简短时间下检查SQL导出数据文件目录中是否存在相同文件，存在且删除
+      if (dataFile.exists()) {
+        dataFile.delete()
+        logger.warn("SQL export data file directory " + dataFile + "has been deleted.")
+      }
       util.output(configMess.getDataFileOutputPath(), filename)
       logger.info(
         "Successfully export data files ==> " + filename + " to ==> " + configMess
@@ -137,7 +149,7 @@ object start {
 
       //切换目录之后将数据库导出的数据文件上传FTP服务器
       client.changeDirectory(configMess.getDataFileOutputPath())
-      logger.info("It has switched to position ==> " +  configMess.getDataFileOutputPath())
+      logger.info("It has switched to position ==> " + configMess.getDataFileOutputPath())
       ftpClient.uploadFile(client, configMess.getDataFileOutputPath(), filename)
       logger.info("The file ==> " + filename + " has been successfully uploaded.")
 
@@ -148,6 +160,10 @@ object start {
       taskMessLog.setUpOrDownloadFlag(1) //文件上传
       util.insert(taskMessLog)
       logger.info("The file transfer log has been recorded.")
+
+      client.disconnect(true)
+      logger.info("The FTP tool link has been safely logged out.")
+      logger.info("====================The second phase is over.====================")
 
       /** 第二阶段结束 */
 
@@ -161,12 +177,12 @@ object start {
       //将数据内容加载到新表，关联相关ID，更新其数据状态
       util.updateCol()
       logger.info("Updating the data table state has been completed.")
+      logger.info("====================The third phase is over.====================")
 
       /** 第三阶段结束 */
       //依靠配置时间来控制循环频率
       Thread.sleep(configMess.getScanTime())
-      logger.info(
-        "====================The first phase is over.====================")
+      logger.info("====================Phase cycle start.====================")
     }
   }
 

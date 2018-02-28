@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <hadoop-env>
-    <uri>hdfs://192.168.102.75:9000</uri>
+    <uri>hdfs://192.168.102.243:9000</uri>
     <hdfsUserName>hadoop</hdfsUserName>
 </hadoop-env>

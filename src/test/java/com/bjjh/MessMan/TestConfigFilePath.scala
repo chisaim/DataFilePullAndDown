@@ -3,6 +3,7 @@ package com.bjjh.MessMan
 import java.io.File
 
 import com.bjjh.MessMan.config.GetConfigMess
+import com.bjjh.MessMan.main.start.{client, configMess}
 import com.bjjh.MessMan.model.Ftp4jFtpClient
 import com.bjjh.MessMan.util.{DownloadDataTransferListener, UploadDataTransferListener}
 import it.sauronsoftware.ftp4j.FTPClient
