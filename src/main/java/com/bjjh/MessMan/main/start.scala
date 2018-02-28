@@ -136,11 +136,8 @@ object start {
           .getDataFileOutputPath() + ". ")
 
       //切换目录之后将数据库导出的数据文件上传FTP服务器
-      client.changeDirectory(configMess.getFTPFileSourceLocation())
-      logger.info(
-        "It has switched to position ==> " + client.changeDirectory(
-          configMess.getFTPFileSourceLocation()) + configMess
-          .getFTPFileSourceLocation())
+      client.changeDirectory(configMess.getDataFileOutputPath())
+      logger.info("It has switched to position ==> " +  configMess.getDataFileOutputPath())
       ftpClient.uploadFile(client, configMess.getDataFileOutputPath(), filename)
       logger.info("The file ==> " + filename + " has been successfully uploaded.")
 
