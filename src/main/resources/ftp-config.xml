@@ -6,6 +6,7 @@
     <ftp-passwd>userftp</ftp-passwd>
     <data-file-source-location>/home/userftp/data</data-file-source-location>
     <!--<data-file-source-location>/var/public_root/download/2018-01-13</data-file-source-location>-->
-    <data-file-target-location>/home/userftp/ftpdir/down</data-file-target-location>
+    <!--<data-file-target-location>/home/userftp/ftpdir/down</data-file-target-location>-->
+    <data-file-target-location>C:\home\userftp\ftpdir\down</data-file-target-location>
     <scan-time>60000</scan-time>
 </ftp-config>

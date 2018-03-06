@@ -1,6 +1,6 @@
-DROP TABLE site.tranmessioninfo;
+DROP TABLE test.tranmessioninfo;
 
-CREATE TABLE site.tranmessioninfo(
+CREATE TABLE test.tranmessioninfo(
   filename VARCHAR(50) DEFAULT '' comment '文件名称',
   filesize varchar(50) DEFAULT '' comment '文件大小（bytes）',
   fileModifiedDate VARCHAR (20) DEFAULT '' comment'文件最后修改时间',

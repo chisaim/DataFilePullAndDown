@@ -6,7 +6,7 @@ import java.text.SimpleDateFormat
 
 import com.bjjh.MessMan.config.GetConfigMess
 import com.bjjh.MessMan.model.{Ftp4jFtpClient, HdfsDAO, TaskMess}
-import com.bjjh.MessMan.util.{DownloadDataTransferListener, JdbcUtil}
+import com.bjjh.MessMan.util.{DownloadDataTransferListener, JdbcUtil, PrimaryGenerater, UploadDataTransferListener}
 import it.sauronsoftware.ftp4j.{FTPClient, FTPFile}
 import org.apache.hadoop.conf.Configuration
 import org.apache.hadoop.fs.FileSystem
@@ -28,6 +28,8 @@ object start {
   val hdfs = new HdfsDAO
 
   val taskMessLog = new TaskMess
+
+  val pg: PrimaryGenerater = PrimaryGenerater.getInstance
 
   def main(args: Array[String]): Unit = {
 
@@ -109,11 +111,9 @@ object start {
 
           val fspath = new Path(configMess.getHdfsPath() + configMess.getToday())
           //          val fsfilename = new Path(configMess.getToday() + File.separator + file.getName)
-          val hdfsfilename = new Path(fspath + File.separator+ file.getName + "." + configMess.getTimestamp() + ".data")
+          val hdfsfilename = new Path(fspath + File.separator + file.getName + "." + configMess.getTimestamp() + ".data")
+          val localfilename = new Path(configMess.getFTPFileTargetLocation() + File.separator + configMess.getToday() + File.separator + file.getName + ".data")
 
-          val localfilename = new Path(configMess.getFTPFileTargetLocation() + File.separator + configMess.getToday() + File.separator + file.getName)
-
-          //在简短时间下检查HDFS中是否存在相同文件，存在且删除
           if (fs.exists(fspath)) {
             //将文件上传到HDFS上面。
             fs.copyFromLocalFile(localfilename, hdfsfilename)
@@ -129,10 +129,7 @@ object start {
           fs.close()
           logger.info("HDFS closed.")
           logger.info("====================The first phase is over.====================")
-
         }
-
-
       }
 
       /** 第一阶段结束 */
@@ -141,39 +138,45 @@ object start {
         * 开始第二阶段执行，内容是将配置好的表数据导出到数据文件中，然后将其上传搭配FTP服务器的固定路径上。
         */
       //导出数据文件到指定目录
-      val filename = (configMess.getToday() + "_file.txt")
-        .substring(1, (configMess.getToday() + "_file.txt").size)
+      val filename = "MPM_FILE_" + configMess.getTimestamp() + "_" + pg.generaterNextNumber("0000")
 
-      val dataFile = new File(configMess.getDataFileOutputPath() + File.separator + filename)
-      //在简短时间下检查SQL导出数据文件目录中是否存在相同文件，存在且删除
-      if (dataFile.exists()) {
-        dataFile.delete()
-        logger.warn("SQL export data file directory " + dataFile + "has been deleted.")
+      val dataFilePath = new File(configMess.getDataFileOutputPath() + File.separator + configMess.getToday())
+      //在简短时间下检查SQL导出数据文件目录中是否存在相同文件
+      if (dataFilePath.exists()) {
+        util.output(configMess.getDataFileOutputPath() + "/" + configMess.getToday(), filename)
+        logger.info("Successfully export data files ==> " + filename + " to ==> " + configMess.getDataFileOutputPath() + File.separator + configMess.getToday())
+      } else {
+        dataFilePath.mkdirs()
+        logger.info("Successfully create a date directory in mysqlpath.")
+        util.output(configMess.getDataFileOutputPath() + "/" + configMess.getToday(), filename)
+        logger.info("Successfully export data files ==> " + filename + " to ==> " + configMess.getDataFileOutputPath() + File.separator + configMess.getToday())
       }
-      util.output(configMess.getDataFileOutputPath(), filename)
-      logger.info(
-        "Successfully export data files ==> " + filename + " to ==> " + configMess
-          .getDataFileOutputPath() + ". ")
-
       //切换目录之后将数据库导出的数据文件上传FTP服务器
       client.changeDirectory(configMess.getDataFileOutputPath())
-      logger.info("It has switched to position ==> " + configMess.getDataFileOutputPath())
-      ftpClient.uploadFile(client, configMess.getDataFileOutputPath(), filename)
-      logger.info("The file ==> " + filename + " has been successfully uploaded.")
+      logger.info("It has switched to position ==> " + configMess.getDataFileOutputPath() + File.separator + configMess.getToday())
+      val sqllist = client.list()
+      logger.info("Start scanning the file under this path:" + client.currentDirectory())
+      for (file <- sqllist) {
+        logger.info(file)
 
-      //记录文件上传日志
-      taskMessLog.setFilename(filename)
-      taskMessLog.setFileSize(
-        new File(configMess.getFTPFileSourceLocation() + filename).getUsableSpace)
-      taskMessLog.setUpOrDownloadFlag(1) //文件上传
-      util.insert(taskMessLog)
-      logger.info("The file transfer log has been recorded.")
+        //        ftpClient.uploadFile(client, configMess.getDataFileOutputPath(), filename)
+        client.upload(new File(filename + "_" + file.getSize + ".data"), new UploadDataTransferListener())
+        logger.info("The file ==> " + filename + "_" + file.getSize + ".data" + " has been successfully uploaded.")
+
+        //记录文件上传日志
+        taskMessLog.setFilename(file.getName)
+        taskMessLog.setModifyDate(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(file.getModifiedDate))
+        taskMessLog.setFileSize(file.getSize)
+        taskMessLog.setUpOrDownloadFlag(1)
+        util.insert(taskMessLog)
+        logger.info("The file transfer log has been recorded.")
+      }
 
       //FTP传输完毕之后关闭连接
       client.disconnect(false) //安全退出
       logger.info("The FTP tool link has been safely logged out.")
       logger.info("====================The second phase is over.====================")
-
+      System.exit(1)
       /** 第二阶段结束 */
 
       /**

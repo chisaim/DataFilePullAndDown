@@ -37,7 +37,7 @@ class JdbcUtil {
   }
 
   def output(path:String,filename:String):Unit = {
-    val sql = "SELECT *  INTO OUTFILE '" + path + "/" + filename + "' fields TERMINATED BY '\t' OPTIONALLY ENCLOSED BY '' lines TERMINATED BY '\n' FROM site.taskMessTable"
+    val sql = "SELECT *  INTO OUTFILE '" + path + "/" + filename + "' fields TERMINATED BY '\t' OPTIONALLY ENCLOSED BY '' lines TERMINATED BY '\n' FROM test.taskMessTable"
     val ptst = getConnection().prepareStatement(sql)
     ptst.execute()
     ptst.close()
