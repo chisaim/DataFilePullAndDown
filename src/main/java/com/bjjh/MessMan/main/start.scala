@@ -2,10 +2,11 @@ package com.bjjh.MessMan.main
 
 import java.io.File
 import java.net.URI
+import java.text.SimpleDateFormat
 
 import com.bjjh.MessMan.config.GetConfigMess
 import com.bjjh.MessMan.model.{Ftp4jFtpClient, HdfsDAO, TaskMess}
-import com.bjjh.MessMan.util.JdbcUtil
+import com.bjjh.MessMan.util.{DownloadDataTransferListener, JdbcUtil}
 import it.sauronsoftware.ftp4j.{FTPClient, FTPFile}
 import org.apache.hadoop.conf.Configuration
 import org.apache.hadoop.fs.FileSystem
@@ -49,82 +50,89 @@ object start {
       logger.info("The database is successfully connected.")
 
       client.setType(FTPClient.TYPE_BINARY)
+      logger.info("Transmission mode is TYPE_BINARY")
 
-      logger.info(
-        "It has switched to position ==>" + client.changeDirectory(
-          configMess.getFTPFileSourceLocation()) + configMess
-          .getFTPFileSourceLocation())
+      /**
+        * 开始第一阶段执行，内容是到FTP服务器的固定路径下载数据文件放入固定位置然后再上传到hadoop的HDFS上面。
+        */
+      logger.info("====================mession start ...====================")
+
+      client.changeDirectory(configMess.getFTPFileSourceLocation())
+      val list = client.list()
+      logger.info("Start scanning the file under this path:" + client.currentDirectory())
       //扫描当前路径下的文件，空就继续扫描。
-      logger.info(
-        "Start scanning the file under this path:" + client.currentDirectory())
-      if (client.list(client.currentDirectory()).isEmpty) {
-        logger.warn(
-          "The directory ==>" + client
-            .currentDirectory() + " no file in this directory, continue to scan...")
+      if (list.isEmpty) {
+        logger.info("The directory ==>" + client.currentDirectory() + " no file in this directory, continue to scan...")
       } else {
-        for (file <- client.list(client.currentDirectory())) {
-          //扫描目录之后取文件类型
-          if (file.getType == FTPFile.TYPE_FILE) {
-            logger.info(
-              "This path ==>" + client
-                .currentDirectory() + " and existing files ==>" + file.getName)
+        for (file <- list) {
+          logger.info(file)
 
-            val path = new File(
-              configMess
-                .getFTPFileTargetLocation() + File.separator + configMess
-                .getTimestamp())
-            if (!path.exists()) {
-              path.mkdirs()
-            }
-            //将文件下载到配置位置
-            ftpClient.downloadFile(
-              client,
-              configMess.getFTPFileSourceLocation(),
-              configMess.getFTPFileTargetLocation() + configMess.getTimestamp(),
-              file.getName)
-            logger.info(
-              "The file ==>" + file.getName + " has been successfully downloaded.")
-            //数据库记录文件下载日志
-            taskMessLog.setFilename(file.getName)
-            taskMessLog.setFileSize(file.getSize())
-            taskMessLog.setUpOrDownloadFlag(2)
-            util.insert(taskMessLog)
-            logger.info("The file transfer log has been recorded.")
-            //建立hadoop的HDFS链接
-            val fs = FileSystem.get(URI.create(configMess.getHDFSURI),
-              new Configuration,
-              configMess.getHdfsUserName)
+          /** 接口文档中这个位置可能需要对文件进行校验，其规则是
+            * 1.检查数据文件名称是否遵守规范中的命名规范。
+            * 2.验证数据文件中的数据日志是否正确合理。
+            * 3.数据文件的生成日期是否正确合理。
+            * 4.校验文件中的大小与实际文件大小是否一致。
+            */
+          /**
+            * if(){
+            * 校验部分
+            * } */
 
 
-            //在简短时间下检查HDFS中是否存在相同文件，存在且删除
-            if (fs.exists(new Path(
-              configMess.getTimestamp() + File.separator + file.getName))) {
-              logger.warn(
-                "There are already files ==>" + configMess
-                  .getTimestamp() + File.separator + file.getName + " in HDFS.")
-              fs.delete(new Path(
-                configMess.getTimestamp() + File.separator + file.getName), false)
-              logger.warn("HDFS" + new Path(
-                configMess.getTimestamp() + File.separator + file.getName) + " has been deleted.")
-            }
+          val Tpath = new File(configMess.getFTPFileTargetLocation() + File.separator + configMess.getToday())
+          val Tfilename = Tpath + File.separator + file.getName + ".data"
+          //数据文件下载时目标路径存在则直接放置，否则新建目标路径再放置其中，之后删除服务器端的数据文件
+          if (Tpath.exists()) {
+            client.download(file.getName, new File(Tfilename), new DownloadDataTransferListener)
+            logger.info("The file ==>" + file.getName + " has been successfully downloaded.")
+            client.deleteFile(file.getName)
+            logger.info("The file ==>" + file.getName + " has been successfully delete.")
+          } else {
+            Tpath.mkdirs()
+            logger.info("Successfully create a date directory " + Tpath)
+            client.download(file.getName, new File(Tfilename), new DownloadDataTransferListener)
+            logger.info("The file ==>" + file.getName + " has been successfully downloaded.")
+            client.deleteFile(file.getName)
+            logger.info("The file ==>" + file.getName + " has been successfully delete.")
+          }
+          //日志记录设定值
+          taskMessLog.setFilename(file.getName)
+          taskMessLog.setModifyDate(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(file.getModifiedDate))
+          taskMessLog.setFileSize(file.getSize)
+          taskMessLog.setUpOrDownloadFlag(2)
+          util.insert(taskMessLog)
+          logger.info("The file transfer log has been recorded.")
+
+
+          //建立hadoop的HDFS链接
+          val fs = FileSystem.get(URI.create(configMess.getHdfsURI), new Configuration, configMess.getHdfsUserName)
+
+          val fspath = new Path(configMess.getHdfsPath() + configMess.getToday())
+          //          val fsfilename = new Path(configMess.getToday() + File.separator + file.getName)
+          val hdfsfilename = new Path(fspath + File.separator+ file.getName + "." + configMess.getTimestamp() + ".data")
+
+          val localfilename = new Path(configMess.getFTPFileTargetLocation() + File.separator + configMess.getToday() + File.separator + file.getName)
+
+          //在简短时间下检查HDFS中是否存在相同文件，存在且删除
+          if (fs.exists(fspath)) {
+            //将文件上传到HDFS上面。
+            fs.copyFromLocalFile(localfilename, hdfsfilename)
+            logger.info("The data has been uploaded to HDFS.")
+          } else {
             //在HDFS上创建时间戳路径
-            fs.mkdirs(new Path(configMess.getTimestamp()))
+            fs.mkdirs(fspath)
             logger.info("Successfully create a date directory in HDFS.")
             //将文件上传到HDFS上面。
-            fs.copyFromLocalFile(
-              new Path(
-                configMess.getFTPFileTargetLocation() + configMess
-                  .getTimestamp() + File.separator + file.getName),
-              new Path(
-                configMess.getTimestamp() + File.separator + file.getName)
-            )
+            fs.copyFromLocalFile(localfilename, hdfsfilename)
             logger.info("The data has been uploaded to HDFS.")
-            fs.close()
-            logger.info("HDFS closed.")
-            logger.info("====================The first phase is over.====================")
-
           }
+          fs.close()
+          logger.info("HDFS closed.")
+          logger.info("====================The first phase is over.====================")
+
         }
+
+
       }
 
       /** 第一阶段结束 */
@@ -133,8 +141,8 @@ object start {
         * 开始第二阶段执行，内容是将配置好的表数据导出到数据文件中，然后将其上传搭配FTP服务器的固定路径上。
         */
       //导出数据文件到指定目录
-      val filename = (configMess.getTimestamp() + "_file.txt")
-        .substring(1, (configMess.getTimestamp() + "_file.txt").size)
+      val filename = (configMess.getToday() + "_file.txt")
+        .substring(1, (configMess.getToday() + "_file.txt").size)
 
       val dataFile = new File(configMess.getDataFileOutputPath() + File.separator + filename)
       //在简短时间下检查SQL导出数据文件目录中是否存在相同文件，存在且删除
@@ -161,7 +169,8 @@ object start {
       util.insert(taskMessLog)
       logger.info("The file transfer log has been recorded.")
 
-      client.disconnect(true)
+      //FTP传输完毕之后关闭连接
+      client.disconnect(false) //安全退出
       logger.info("The FTP tool link has been safely logged out.")
       logger.info("====================The second phase is over.====================")
 

@@ -89,12 +89,16 @@ class GetConfigMess {
     Long.parseLong(getElementTextValue(getConfigFileDocument(configFile.getFTPConfigFile()),"scan-time"))
   }
 
-  def getHDFSURI():String = {
+  def getHdfsURI():String = {
     getElementTextValue(getConfigFileDocument(configFile.getHDFSConfigFile()),"uri")
   }
 
   def getHdfsUserName():String = {
     getElementTextValue(getConfigFileDocument(configFile.getHDFSConfigFile()),"hdfsUserName")
+  }
+
+  def getHdfsPath():String = {
+    getElementTextValue(getConfigFileDocument(configFile.getHDFSConfigFile()),"hdfsPath")
   }
 
   def uploadFileFromHDFS():String = {
@@ -106,9 +110,13 @@ class GetConfigMess {
   }
 
   def getTimestamp():String = {
-    File.separator + new SimpleDateFormat("yyyyMMddHHmm").format(new Date)
+    new SimpleDateFormat("yyyyMMddHHmm").format(new Date)
   }
 
+  def getToday():String = {
+    File.separator + new SimpleDateFormat("yyyyMMdd").format(new Date)
+
+  }
 
 
 }

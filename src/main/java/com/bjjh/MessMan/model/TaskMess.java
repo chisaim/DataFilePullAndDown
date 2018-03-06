@@ -32,8 +32,16 @@ public class TaskMess {
         this.fileSize = fileSize;
     }
 
+    public String getModifyDate() {
+        return modifyDate;
+    }
+
+    public void setModifyDate(String modifyDate) {
+        this.modifyDate = modifyDate;
+    }
+
     public String getTaskTimeAndDate() {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmm");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         return sdf.format(new Date());
     }
 

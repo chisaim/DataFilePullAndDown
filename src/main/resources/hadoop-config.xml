@@ -3,4 +3,5 @@
 <hadoop-env>
     <uri>hdfs://192.168.102.243:9000</uri>
     <hdfsUserName>hadoop</hdfsUserName>
+    <hdfsPath>/test</hdfsPath>
 </hadoop-env>

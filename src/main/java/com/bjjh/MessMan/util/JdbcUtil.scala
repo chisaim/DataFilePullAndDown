@@ -23,12 +23,13 @@ class JdbcUtil {
   }
 
   def insert(taskMess: TaskMess) : Unit = {
-    val exceSql = "insert into site.mession (filename,filesize,exceTaskTimeAndDate,upOrDownloadFlag) values (?,?,?,?)"
+    val exceSql = "insert into site.mession (filename,filesize,fileModifiedDate,exceTaskTimeAndDate,upOrDownloadFlag) values (?,?,?,?,?)"
     val ptst = getConnection().prepareStatement(exceSql)
     ptst.setNString(1,taskMess.getFilename)
     ptst.setNString(2,taskMess.getFileSize)
-    ptst.setNString(3,taskMess.getTaskTimeAndDate)
-    ptst.setNString(4,taskMess.getUpOrDownloadFlag)
+    ptst.setNString(3,taskMess.getModifyDate)
+    ptst.setNString(4,taskMess.getTaskTimeAndDate)
+    ptst.setNString(5,taskMess.getUpOrDownloadFlag)
     ptst.executeUpdate()
     ptst.close()
     getConnection().close()
