@@ -41,11 +41,11 @@ object start {
     while (true) {
       logger.info("The FTP tool starts to connect. ...")
       client.connect(configMess.getFTPServer(), configMess.getFTPPort())
-      logger.info("FTP tool connection successful.")
+      logger.info("FTP tool connect Server " + configMess.getFTPServer() + ":" + configMess.getFTPPort() + " successful.")
 
       logger.info("The FTP tool login begins ...")
       client.login(configMess.getFTPUser(), configMess.getFTPPasswd())
-      logger.info("FTP tool login successful.")
+      logger.info("FTP tool login user: " + configMess.getFTPUser() + " successful.")
 
       logger.info("The database connection begins to connect...")
       util.getConnection()
@@ -57,7 +57,6 @@ object start {
       /**
         * 开始第一阶段执行，内容是到FTP服务器的固定路径下载数据文件放入固定位置然后再上传到hadoop的HDFS上面。
         */
-      logger.info("====================mession start ...====================")
 
       client.changeDirectory(configMess.getFTPFileSourceLocation())
       val list = client.list()
@@ -128,8 +127,8 @@ object start {
           }
           fs.close()
           logger.info("HDFS closed.")
-          logger.info("====================The first phase is over.====================")
         }
+        logger.info("====================The first phase is over.====================")
       }
 
       /** 第一阶段结束 */
@@ -176,17 +175,18 @@ object start {
       client.disconnect(false) //安全退出
       logger.info("The FTP tool link has been safely logged out.")
       logger.info("====================The second phase is over.====================")
+
       /** 第二阶段结束 */
 
       /**
         * 到指定位置下去加载数据文件到数据库，然后根据加载的数据更新表内容
-      //    数据库到指定位置去加载数据文件
-      util.loadDataFile(configMess.getDataFileOutputPath(), filename)
-      logger.info("Database load data file " + filename + " complete.")
-      //将数据内容加载到新表，关联相关ID，更新其数据状态
-      util.updateCol()
-      logger.info("Updating the data table state has been completed.")
-      logger.info("====================The third phase is over.====================")
+        * //    数据库到指定位置去加载数据文件
+        *util.loadDataFile(configMess.getDataFileOutputPath(), filename)
+        *logger.info("Database load data file " + filename + " complete.")
+        * //将数据内容加载到新表，关联相关ID，更新其数据状态
+        *util.updateCol()
+        *logger.info("Updating the data table state has been completed.")
+        *logger.info("====================The third phase is over.====================")
         */
 
       /** 第三阶段结束 */
