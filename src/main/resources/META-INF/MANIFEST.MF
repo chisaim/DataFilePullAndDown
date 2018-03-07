@@ -35,6 +35,6 @@ Class-Path: lib/netty-3.7.0.Final.jar lib/jettison-1.1.jar lib/protobu
  lib/hadoop-mapreduce-client-app-2.7.0.jar lib/httpclient-4.1.2.jar li
  b/xml-apis-1.0.b2.jar lib/commons-httpclient-3.1.jar lib/scala-reflec
  t-2.11.8.jar lib/curator-client-2.7.1.jar config/db-config.xml config
- /ftp-config.xml config/hadoop-config.xml config/log4j.properties
+ /ftp-config.xml config/hadoop-config.xml config/log4j.properties log/
 Main-Class: com.bjjh.MessMan.main.start
 

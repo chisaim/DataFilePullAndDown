@@ -100,6 +100,7 @@
         <element id="file-copy" path="$PROJECT_DIR$/src/main/resources/hadoop-config.xml" />
         <element id="file-copy" path="$PROJECT_DIR$/src/main/resources/log4j.properties" />
       </element>
+      <element id="directory" name="log" />
     </root>
   </artifact>
 </component>
