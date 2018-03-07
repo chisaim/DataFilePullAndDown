@@ -176,7 +176,6 @@ object start {
       client.disconnect(false) //安全退出
       logger.info("The FTP tool link has been safely logged out.")
       logger.info("====================The second phase is over.====================")
-      System.exit(1)
       /** 第二阶段结束 */
 
       /**
