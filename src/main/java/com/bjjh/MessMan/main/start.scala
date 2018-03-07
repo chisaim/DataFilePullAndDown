@@ -181,15 +181,14 @@ object start {
 
       /**
         * 到指定位置下去加载数据文件到数据库，然后根据加载的数据更新表内容
-        */
       //    数据库到指定位置去加载数据文件
       util.loadDataFile(configMess.getDataFileOutputPath(), filename)
       logger.info("Database load data file " + filename + " complete.")
-
       //将数据内容加载到新表，关联相关ID，更新其数据状态
       util.updateCol()
       logger.info("Updating the data table state has been completed.")
       logger.info("====================The third phase is over.====================")
+        */
 
       /** 第三阶段结束 */
       //依靠配置时间来控制循环频率

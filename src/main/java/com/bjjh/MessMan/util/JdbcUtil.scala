@@ -23,7 +23,7 @@ class JdbcUtil {
   }
 
   def insert(taskMess: TaskMess) : Unit = {
-    val exceSql = "insert into site.mession (filename,filesize,fileModifiedDate,exceTaskTimeAndDate,upOrDownloadFlag) values (?,?,?,?,?)"
+    val exceSql = "insert into test.tranmessioninfo (filename,filesize,fileModifiedDate,exceTaskTimeAndDate,upOrDownloadFlag) values (?,?,?,?,?)"
     val ptst = getConnection().prepareStatement(exceSql)
     ptst.setNString(1,taskMess.getFilename)
     ptst.setNString(2,taskMess.getFileSize)
@@ -37,7 +37,7 @@ class JdbcUtil {
   }
 
   def output(path:String,filename:String):Unit = {
-    val sql = "SELECT *  INTO OUTFILE '" + path + "/" + filename + "' fields TERMINATED BY '\t' OPTIONALLY ENCLOSED BY '' lines TERMINATED BY '\n' FROM test.taskMessTable"
+    val sql = "SELECT monitoredtime,callerid,calledid,content,inspect_info,inspect_level  INTO OUTFILE '" + path + "/" + filename + "' fields TERMINATED BY '\t' OPTIONALLY ENCLOSED BY '' lines TERMINATED BY '\n' FROM test.sms_audited"
     val ptst = getConnection().prepareStatement(sql)
     ptst.execute()
     ptst.close()
