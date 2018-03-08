@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <db-env>
     <driverClassName>com.mysql.jdbc.Driver</driverClassName>
     <dbUrl>jdbc:mysql://192.168.102.117:3306/site?characterEncoding=utf8&amp;allowMultiQueries=true&amp;useSSL=true</dbUrl>
     <dbUserName>mysql</dbUserName>
     <dbPassword>mysql</dbPassword>
-
+    <!--Database of mysql export file address.-->
     <dataFileOutputPath>/mysql/data/out</dataFileOutputPath>
+    <!--reserve a place-->
     <dataFileInputPath>/mysql/data/in</dataFileInputPath>
 </db-env>
