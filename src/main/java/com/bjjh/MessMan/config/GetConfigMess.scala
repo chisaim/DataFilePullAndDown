@@ -119,8 +119,6 @@ class GetConfigMess {
 
   def getToday(): String = {
     File.separator + new SimpleDateFormat("yyyyMMdd").format(new Date)
-
   }
-
 
 }

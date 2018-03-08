@@ -110,7 +110,7 @@ object start {
           //建立hadoop的HDFS链接
           val fs = FileSystem.get(URI.create(configMess.getHdfsURI), new Configuration, configMess.getHdfsUserName)
           logger.info("HDFS URI:" + configMess.getHdfsURI() + " .HDFS username:" + configMess.getHdfsUserName + " is successfully connected.")
-          val fspath = new Path(configMess.getHdfsPath() + configMess.getToday())
+          val fspath = new Path(configMess.getHdfsPath() + configMess.getTimestamp())
           val hdfsfilename = new Path(fspath + File.separator + file.getName + "." + configMess.getTimestamp() + ".data")
           val localfilename = new Path(configMess.getFTPFileSavePath() + File.separator + configMess.getToday() + File.separator + file.getName + ".data")
 
