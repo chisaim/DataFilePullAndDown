@@ -3,10 +3,12 @@ package com.bjjh.MessMan.main
 import java.io.File
 import java.net.URI
 import java.text.SimpleDateFormat
+import java.util.Date
 
 import com.bjjh.MessMan.config.GetConfigMess
 import com.bjjh.MessMan.model.{Ftp4jFtpClient, HdfsDAO, TaskMess}
 import com.bjjh.MessMan.util.{DownloadDataTransferListener, JdbcUtil, PrimaryGenerater, UploadDataTransferListener}
+import com.sun.deploy.resources.Deployment_pt_BR
 import it.sauronsoftware.ftp4j.{FTPClient, FTPFile}
 import org.apache.hadoop.conf.Configuration
 import org.apache.hadoop.fs.FileSystem
@@ -49,7 +51,7 @@ object start {
 
       logger.info("The database connection begins to connect...")
       util.getConnection()
-      logger.info("The database is successfully connected.")
+      logger.info("The database Server Url:" + configMess.getDBUrl() + " user:" + configMess.getDbUserName() + " is successfully connected.")
 
       client.setType(FTPClient.TYPE_BINARY)
       logger.info("Transmission mode is TYPE_BINARY")
@@ -80,21 +82,21 @@ object start {
             * } */
 
 
-          val Tpath = new File(configMess.getFTPFileTargetLocation() + File.separator + configMess.getToday())
+          val Tpath = new File(configMess.getFTPFileSavePath() + File.separator + configMess.getToday())
           val Tfilename = Tpath + File.separator + file.getName + ".data"
           //数据文件下载时目标路径存在则直接放置，否则新建目标路径再放置其中，之后删除服务器端的数据文件
           if (Tpath.exists()) {
             client.download(file.getName, new File(Tfilename), new DownloadDataTransferListener)
-            logger.info("The file ==>" + file.getName + " has been successfully downloaded.")
+            logger.info("The file ==>" + file.getName + " has been successfully downloaded to path:" + Tpath.getPath)
             client.deleteFile(file.getName)
-            logger.info("The file ==>" + file.getName + " has been successfully delete.")
+            logger.info("The file ==>" + client.currentDirectory() + File.separator + file.getName + " has been successfully delete.")
           } else {
             Tpath.mkdirs()
             logger.info("Successfully create a date directory " + Tpath)
             client.download(file.getName, new File(Tfilename), new DownloadDataTransferListener)
-            logger.info("The file ==>" + file.getName + " has been successfully downloaded.")
+            logger.info("The file ==>" + file.getName + " has been successfully downloaded to path:" + Tpath.getPath)
             client.deleteFile(file.getName)
-            logger.info("The file ==>" + file.getName + " has been successfully delete.")
+            logger.info("The file ==>" + client.currentDirectory() + File.separator + file.getName + " has been successfully delete.")
           }
           //日志记录设定值
           taskMessLog.setFilename(file.getName)
@@ -102,34 +104,33 @@ object start {
           taskMessLog.setFileSize(file.getSize)
           taskMessLog.setUpOrDownloadFlag(2)
           util.insert(taskMessLog)
-          logger.info("The file transfer log has been recorded.")
+          logger.info("The file ==>" + file.getName + " transfer log has been recorded.")
 
 
           //建立hadoop的HDFS链接
           val fs = FileSystem.get(URI.create(configMess.getHdfsURI), new Configuration, configMess.getHdfsUserName)
-
+          logger.info("HDFS URI:" + configMess.getHdfsURI() + " .HDFS username:" + configMess.getHdfsUserName + " is successfully connected.")
           val fspath = new Path(configMess.getHdfsPath() + configMess.getToday())
-          //          val fsfilename = new Path(configMess.getToday() + File.separator + file.getName)
           val hdfsfilename = new Path(fspath + File.separator + file.getName + "." + configMess.getTimestamp() + ".data")
-          val localfilename = new Path(configMess.getFTPFileTargetLocation() + File.separator + configMess.getToday() + File.separator + file.getName + ".data")
+          val localfilename = new Path(configMess.getFTPFileSavePath() + File.separator + configMess.getToday() + File.separator + file.getName + ".data")
 
           if (fs.exists(fspath)) {
             //将文件上传到HDFS上面。
             fs.copyFromLocalFile(localfilename, hdfsfilename)
-            logger.info("The data has been uploaded to HDFS.")
+            logger.info("The filename of data is " + localfilename.getName + " has been uploaded to HDFS.")
           } else {
             //在HDFS上创建时间戳路径
             fs.mkdirs(fspath)
-            logger.info("Successfully create a date directory in HDFS.")
+            logger.info("Successfully create a date directory:" + fspath + " in HDFS.")
             //将文件上传到HDFS上面。
             fs.copyFromLocalFile(localfilename, hdfsfilename)
-            logger.info("The data has been uploaded to HDFS.")
+            logger.info("The filename of data is " + localfilename.getName + " has been uploaded to HDFS.")
           }
           fs.close()
           logger.info("HDFS closed.")
         }
-        logger.info("====================The first phase is over.====================")
       }
+      logger.info("====================The first phase is over.====================")
 
       /** 第一阶段结束 */
 
@@ -137,40 +138,47 @@ object start {
         * 开始第二阶段执行，内容是将配置好的表数据导出到数据文件中，然后将其上传搭配FTP服务器的固定路径上。
         */
       //导出数据文件到指定目录
-      val filename = "MPM_FILE_" + configMess.getTimestamp() + "_" + pg.generaterNextNumber("0000")
 
-      val dataFilePath = new File(configMess.getDataFileOutputPath() + File.separator + configMess.getToday())
-      //在简短时间下检查SQL导出数据文件目录中是否存在相同文件
+      val filename = "MPM_FILE_" + configMess.getTimestamp() + "_" + pg.generaterNextNumber("0000") + ".data"
+      val dataFilePath = new File(configMess.getDataFileOutputPath())
       if (dataFilePath.exists()) {
-        util.output(configMess.getDataFileOutputPath() + "/" + configMess.getToday(), filename)
-        logger.info("Successfully export data files ==> " + filename + " to ==> " + configMess.getDataFileOutputPath() + File.separator + configMess.getToday())
+        util.output(configMess.getDataFileOutputPath(), filename)
+        logger.info("Successfully export data files ==> " + filename + " to ==> " + configMess.getDataFileOutputPath())
       } else {
         dataFilePath.mkdirs()
         logger.info("Successfully create a date directory in mysqlpath.")
-        util.output(configMess.getDataFileOutputPath() + "/" + configMess.getToday(), filename)
-        logger.info("Successfully export data files ==> " + filename + " to ==> " + configMess.getDataFileOutputPath() + File.separator + configMess.getToday())
+        util.output(configMess.getDataFileOutputPath(), filename)
+        logger.info("Successfully export data files ==> " + filename + " to ==> " + configMess.getDataFileOutputPath())
       }
+
+
       //切换目录之后将数据库导出的数据文件上传FTP服务器
-      client.changeDirectory(configMess.getDataFileOutputPath())
-      logger.info("It has switched to position ==> " + configMess.getDataFileOutputPath() + File.separator + configMess.getToday())
-      val sqllist = client.list()
-      logger.info("Start scanning the file under this path:" + client.currentDirectory())
-      for (file <- sqllist) {
-        logger.info(file)
-
-        //        ftpClient.uploadFile(client, configMess.getDataFileOutputPath(), filename)
-        client.upload(new File(filename + "_" + file.getSize + ".data"), new UploadDataTransferListener())
-        logger.info("The file ==> " + filename + "_" + file.getSize + ".data" + " has been successfully uploaded.")
-
-        //记录文件上传日志
-        taskMessLog.setFilename(file.getName)
-        taskMessLog.setModifyDate(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(file.getModifiedDate))
-        taskMessLog.setFileSize(file.getSize)
-        taskMessLog.setUpOrDownloadFlag(1)
-        util.insert(taskMessLog)
-        logger.info("The file transfer log has been recorded.")
+      client.changeDirectory(configMess.getFTPFileTargetLocation())
+      logger.info("Start scanning the file " + dataFilePath + File.separator + filename + " under this path:" + dataFilePath.getPath)
+      val files = dataFilePath.listFiles()
+      if (files.isEmpty) {
+        logger.info("The directory ==>" + dataFilePath + " no file in this directory, continue to scan...")
+      } else {
+        for (file <- files) {
+          logger.info(file)
+          val datafile = new File(dataFilePath + File.separator + filename)
+          if (datafile.exists()) {
+            client.upload(datafile, new UploadDataTransferListener())
+            logger.info("The file ==> " + filename + ".data" + " has been successfully uploaded.")
+            datafile.delete()
+            logger.info("The file ==>" + datafile + " has been successfully delete.")
+          } else {
+            logger.info("The directory ==>" + dataFilePath.getPath + " no file in this directory, continue to scan...")
+          }
+          //记录文件上传日志
+          taskMessLog.setFilename(datafile.getName)
+          taskMessLog.setModifyDate(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()))
+          taskMessLog.setFileSize(datafile.length())
+          taskMessLog.setUpOrDownloadFlag(1)
+          util.insert(taskMessLog)
+          logger.info("The file ==> " + datafile.getName + " transfer log has been recorded.")
+        }
       }
-
       //FTP传输完毕之后关闭连接
       client.disconnect(false) //安全退出
       logger.info("The FTP tool link has been safely logged out.")

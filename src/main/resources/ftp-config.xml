@@ -4,9 +4,11 @@
     <ftp-port>21</ftp-port>
     <ftp-user>userftp</ftp-user>
     <ftp-passwd>userftp</ftp-passwd>
-    <data-file-source-location>/home/userftp/data</data-file-source-location>
-    <!--<data-file-source-location>/var/public_root/download/2018-01-13</data-file-source-location>-->
-    <!--<data-file-target-location>/home/userftp/ftpdir/down</data-file-target-location>-->
-    <data-file-target-location>C:\home\userftp\ftpdir\down</data-file-target-location>
+    <!--This path is the FTP Server source address.-->
+    <data-file-source-location>/home/userftp/ftpdir/down</data-file-source-location>
+    <!--This path is the FTP Server upload file address.-->
+    <data-file-target-location>/home/userftp/ftpdir/up</data-file-target-location>
+    <!--This path is the storage address for the file from the FTP Server.-->
+    <data-file-save-location>/home/userftp/data</data-file-save-location>
     <scan-time>60000</scan-time>
 </ftp-config>

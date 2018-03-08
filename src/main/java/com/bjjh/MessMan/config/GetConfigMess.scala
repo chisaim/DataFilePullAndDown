@@ -53,67 +53,71 @@ class GetConfigMess {
     getElementTextValue(getConfigFileDocument(configFile.getDbConfigFile()), "dbPassword")
   }
 
-  def getDataFileOutputPath() : String = {
+  def getDataFileOutputPath(): String = {
     getElementTextValue(getConfigFileDocument(configFile.getDbConfigFile()), "dataFileOutputPath")
   }
 
-  def getDataFileInputPath() : String = {
+  def getDataFileInputPath(): String = {
     getElementTextValue(getConfigFileDocument(configFile.getDbConfigFile()), "dataFileInputPath")
   }
 
-  def getFTPServer():String = {
-    getElementTextValue(getConfigFileDocument(configFile.getFTPConfigFile()),"ftp-server")
+  def getFTPServer(): String = {
+    getElementTextValue(getConfigFileDocument(configFile.getFTPConfigFile()), "ftp-server")
   }
 
-  def getFTPPort():Int = {
-    Integer.parseInt(getElementTextValue(getConfigFileDocument(configFile.getFTPConfigFile()),"ftp-port"))
+  def getFTPPort(): Int = {
+    Integer.parseInt(getElementTextValue(getConfigFileDocument(configFile.getFTPConfigFile()), "ftp-port"))
   }
 
-  def getFTPUser():String = {
-    getElementTextValue(getConfigFileDocument(configFile.getFTPConfigFile()),"ftp-user")
+  def getFTPUser(): String = {
+    getElementTextValue(getConfigFileDocument(configFile.getFTPConfigFile()), "ftp-user")
   }
 
-  def getFTPPasswd():String = {
-    getElementTextValue(getConfigFileDocument(configFile.getFTPConfigFile()),"ftp-passwd")
+  def getFTPPasswd(): String = {
+    getElementTextValue(getConfigFileDocument(configFile.getFTPConfigFile()), "ftp-passwd")
   }
 
-  def getFTPFileSourceLocation():String = {
-    getElementTextValue(getConfigFileDocument(configFile.getFTPConfigFile()),"data-file-source-location")
+  def getFTPFileSourceLocation(): String = {
+    getElementTextValue(getConfigFileDocument(configFile.getFTPConfigFile()), "data-file-source-location")
   }
 
-  def getFTPFileTargetLocation():String = {
-    getElementTextValue(getConfigFileDocument(configFile.getFTPConfigFile()),"data-file-target-location")
+  def getFTPFileTargetLocation(): String = {
+    getElementTextValue(getConfigFileDocument(configFile.getFTPConfigFile()), "data-file-target-location")
   }
 
-  def getScanTime():Long = {
-    Long.parseLong(getElementTextValue(getConfigFileDocument(configFile.getFTPConfigFile()),"scan-time"))
+  def getFTPFileSavePath(): String = {
+    getElementTextValue(getConfigFileDocument(configFile.getFTPConfigFile()), "data-file-save-location")
   }
 
-  def getHdfsURI():String = {
-    getElementTextValue(getConfigFileDocument(configFile.getHDFSConfigFile()),"uri")
+  def getScanTime(): Long = {
+    Long.parseLong(getElementTextValue(getConfigFileDocument(configFile.getFTPConfigFile()), "scan-time"))
   }
 
-  def getHdfsUserName():String = {
-    getElementTextValue(getConfigFileDocument(configFile.getHDFSConfigFile()),"hdfsUserName")
+  def getHdfsURI(): String = {
+    getElementTextValue(getConfigFileDocument(configFile.getHDFSConfigFile()), "uri")
   }
 
-  def getHdfsPath():String = {
-    getElementTextValue(getConfigFileDocument(configFile.getHDFSConfigFile()),"hdfsPath")
+  def getHdfsUserName(): String = {
+    getElementTextValue(getConfigFileDocument(configFile.getHDFSConfigFile()), "hdfsUserName")
   }
 
-  def uploadFileFromHDFS():String = {
-    getElementTextValue(getConfigFileDocument(configFile.getHDFSConfigFile()),"data-file-source-location")
+  def getHdfsPath(): String = {
+    getElementTextValue(getConfigFileDocument(configFile.getHDFSConfigFile()), "hdfsPath")
   }
 
-  def downloadFileFromHDFS():String = {
-    getElementTextValue(getConfigFileDocument(configFile.getHDFSConfigFile()),"data-file-target-location")
+  def uploadFileFromHDFS(): String = {
+    getElementTextValue(getConfigFileDocument(configFile.getHDFSConfigFile()), "data-file-source-location")
   }
 
-  def getTimestamp():String = {
+  def downloadFileFromHDFS(): String = {
+    getElementTextValue(getConfigFileDocument(configFile.getHDFSConfigFile()), "data-file-target-location")
+  }
+
+  def getTimestamp(): String = {
     new SimpleDateFormat("yyyyMMddHHmm").format(new Date)
   }
 
-  def getToday():String = {
+  def getToday(): String = {
     File.separator + new SimpleDateFormat("yyyyMMdd").format(new Date)
 
   }

@@ -24,13 +24,9 @@ object TestConfigFilePath {
 
     client.setType(FTPClient.SECURITY_FTPS)
 
-    for(list <- client.list(configMess.getFTPFileSourceLocation())){
-      list.getType
-    }
-
 //    client.changeDirectory(configMess.getFTPFileSourceLocation())
 
-    println(new File("D:\\Download\\data").getUsableSpace)
+    println(configMess.getFTPFileSavePath())
 
 //    ftpClient.downloadFile(client,"123.txt",configMess.getFTPFileTargetLocation(),"123.txt")
 
