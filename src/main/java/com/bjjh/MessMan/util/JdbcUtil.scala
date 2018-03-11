@@ -18,33 +18,44 @@ class JdbcUtil {
 
   Class.forName(configMess.getDriverClassName()).newInstance()
 
-  def getConnection() : Connection = {
-    DriverManager.getConnection(configMess.getDBUrl(),configMess.getDbUserName(),configMess.getDbPassword())
+  def getConnection(): Connection = {
+    DriverManager.getConnection(configMess.getDBUrl(), configMess.getDbUserName(), configMess.getDbPassword())
   }
 
-  def insert(taskMess: TaskMess) : Unit = {
+  def insert(taskMess: TaskMess): Unit = {
     val exceSql = "insert into test.tranmessioninfo (filename,filesize,fileModifiedDate,exceTaskTimeAndDate,upOrDownloadFlag) values (?,?,?,?,?)"
     val ptst = getConnection().prepareStatement(exceSql)
-    ptst.setNString(1,taskMess.getFilename)
-    ptst.setNString(2,taskMess.getFileSize)
-    ptst.setNString(3,taskMess.getModifyDate)
-    ptst.setNString(4,taskMess.getTaskTimeAndDate)
-    ptst.setNString(5,taskMess.getUpOrDownloadFlag)
+    ptst.setNString(1, taskMess.getFilename)
+    ptst.setNString(2, taskMess.getFileSize)
+    ptst.setNString(3, taskMess.getModifyDate)
+    ptst.setNString(4, taskMess.getTaskTimeAndDate)
+    ptst.setNString(5, taskMess.getUpOrDownloadFlag)
     ptst.executeUpdate()
     ptst.close()
     getConnection().close()
 
   }
 
-  def output(path:String,filename:String):Unit = {
-    val sql = "SELECT monitoredtime,callerid,calledid,content,inspect_info,inspect_level  INTO OUTFILE '" + path + "/" + filename + "' fields TERMINATED BY '\t' OPTIONALLY ENCLOSED BY '' lines TERMINATED BY '\n' FROM test.sms_audited"
+  def output(path: String, filename: String): Unit = {
+    val sql = "SELECT bwnumber,expirytime,bwclass,optype INTO OUTFILE '" + path + "/" + filename + "' fields TERMINATED BY '\t' OPTIONALLY ENCLOSED BY '' lines TERMINATED BY '\n' FROM test.policy_bwlist"
     val ptst = getConnection().prepareStatement(sql)
     ptst.execute()
     ptst.close()
     getConnection().close()
   }
 
-  def loadDataFile(path:String,filename:String): Unit ={
+  def count(): Long = {
+    val sql = "SELECT COUNT(1) FROM test.policy_bwlist"
+    val ptst = getConnection().prepareStatement(sql)
+    val set = ptst.executeQuery()
+    var count = 0
+    while (set.next()) {
+      count = set.getInt(1)
+    }
+    count
+  }
+
+  def loadDataFile(path: String, filename: String): Unit = {
     val sql = "LOAD DATA INFILE '" + path + "/" + filename + "' INTO TABLE site.taskMessTable fields TERMINATED BY '\t' OPTIONALLY ENCLOSED BY '' LINES TERMINATED BY '\n'"
     val ptst = getConnection().prepareStatement(sql)
     ptst.execute()
@@ -52,7 +63,7 @@ class JdbcUtil {
     getConnection().close()
   }
 
-  def updateCol(): Unit ={
+  def updateCol(): Unit = {
     val sql = "UPDATE site.employee AS T,(SELECT dept_id FROM site.department) AS S SET T.email = '944125621@qq.com' WHERE S.dept_id = T.dept_id AND T.employee_id = '26'"
     val ptst = getConnection().prepareStatement(sql)
     ptst.executeUpdate()
@@ -60,7 +71,7 @@ class JdbcUtil {
     getConnection().close()
   }
 
-  def AutoCommitTransaction(AutoCommitFlag:Boolean):Unit = {
+  def AutoCommitTransaction(AutoCommitFlag: Boolean): Unit = {
     getConnection().setAutoCommit(true)
   }
 }

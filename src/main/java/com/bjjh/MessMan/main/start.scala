@@ -84,13 +84,13 @@ object start {
 
           val Tpath = new File(configMess.getFTPFileSavePath() + File.separator + configMess.getToday())
           val Tfilename = Tpath + File.separator + file.getName + ".data"
-          //数据文件下载时目标路径存在则直接放置，否则新建目标路径再放置其中，之后删除服务器端的数据文件
-          if (Tpath.exists()) {
+          //检测数据文件，类型为文件，文件名后没有.TMP的文件，下载时目标路径存在则直接放置，否则新建目标路径再放置其中，之后删除服务器端的数据文件
+          if (Tpath.exists() && file.getType == FTPFile.TYPE_FILE && !file.getName.endsWith(".TMP")) {
             client.download(file.getName, new File(Tfilename), new DownloadDataTransferListener)
             logger.info("The file ==>" + file.getName + " has been successfully downloaded to path:" + Tpath.getPath)
             client.deleteFile(file.getName)
             logger.info("The file ==>" + client.currentDirectory() + File.separator + file.getName + " has been successfully delete.")
-          } else {
+          } else if (file.getType == FTPFile.TYPE_FILE && !file.getName.endsWith(".TMP")) {
             Tpath.mkdirs()
             logger.info("Successfully create a date directory " + Tpath)
             client.download(file.getName, new File(Tfilename), new DownloadDataTransferListener)
@@ -139,7 +139,7 @@ object start {
         */
       //导出数据文件到指定目录
 
-      val filename = "MPM_FILE_" + configMess.getTimestamp() + "_" + pg.generaterNextNumber("0000") + ".data"
+      val filename = "Blacklist_3G_" + configMess.getTimestamp() + "_" + util.count() + ".TMP"
       val dataFilePath = new File(configMess.getDataFileOutputPath())
       if (dataFilePath.exists()) {
         util.output(configMess.getDataFileOutputPath(), filename)
@@ -164,16 +164,19 @@ object start {
           val datafile = new File(dataFilePath + File.separator + filename)
           if (datafile.exists()) {
             client.upload(datafile, new UploadDataTransferListener())
-            logger.info("The file ==> " + filename + ".data" + " has been successfully uploaded.")
+            logger.info("The file ==> " + filename + " has been successfully uploaded.")
+            client.rename(datafile.getName, datafile.getName.substring(0, datafile.getName.length - 4))
+            logger.info("The remote file name is " + datafile.getName + " rename ====> " + datafile.getName.substring(0, datafile.getName.length - 4))
             datafile.delete()
             logger.info("The file ==>" + datafile + " has been successfully delete.")
           } else {
             logger.info("The directory ==>" + dataFilePath.getPath + " no file in this directory, continue to scan...")
           }
+
           //记录文件上传日志
-          taskMessLog.setFilename(datafile.getName)
+          taskMessLog.setFilename(datafile.getName.substring(0, datafile.getName.length - 4))
           taskMessLog.setModifyDate(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()))
-          taskMessLog.setFileSize(datafile.length())
+          taskMessLog.setFileSize(util.count())
           taskMessLog.setUpOrDownloadFlag(1)
           util.insert(taskMessLog)
           logger.info("The file ==> " + datafile.getName + " transfer log has been recorded.")
