@@ -141,10 +141,10 @@ object start {
 
       val filename = "Blacklist_3G_" + configMess.getTimestamp() + "_" + util.count() + ".TMP"
       val dataFilePath = new File(configMess.getDataFileOutputPath())
-      if (dataFilePath.exists()) {
+      if (dataFilePath.exists() && util.count() != 0) {
         util.output(configMess.getDataFileOutputPath(), filename)
         logger.info("Successfully export data files ==> " + filename + " to ==> " + configMess.getDataFileOutputPath())
-      } else {
+      } else if(util.count() != 0){
         dataFilePath.mkdirs()
         logger.info("Successfully create a date directory in mysqlpath.")
         util.output(configMess.getDataFileOutputPath(), filename)
