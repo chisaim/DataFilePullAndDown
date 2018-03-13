@@ -110,7 +110,7 @@ object start {
           //建立hadoop的HDFS链接
           val fs = FileSystem.get(URI.create(configMess.getHdfsURI), new Configuration, configMess.getHdfsUserName)
           logger.info("HDFS URI:" + configMess.getHdfsURI() + " .HDFS username:" + configMess.getHdfsUserName + " is successfully connected.")
-          val fspath = new Path(configMess.getHdfsPath() + configMess.getTimestamp())
+          val fspath = new Path(configMess.getHdfsPath() + File.separator + configMess.getTimestamp())
           val hdfsfilename = new Path(fspath + File.separator + file.getName + "." + configMess.getTimestamp() + ".data")
           val localfilename = new Path(configMess.getFTPFileSavePath() + File.separator + configMess.getToday() + File.separator + file.getName + ".data")
 
@@ -144,7 +144,7 @@ object start {
       if (dataFilePath.exists() && util.count() != 0) {
         util.output(configMess.getDataFileOutputPath(), filename)
         logger.info("Successfully export data files ==> " + filename + " to ==> " + configMess.getDataFileOutputPath())
-      } else if(util.count() != 0){
+      } else if (util.count() != 0) {
         dataFilePath.mkdirs()
         logger.info("Successfully create a date directory in mysqlpath.")
         util.output(configMess.getDataFileOutputPath(), filename)
