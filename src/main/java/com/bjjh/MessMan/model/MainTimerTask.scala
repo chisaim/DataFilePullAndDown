@@ -1,12 +1,15 @@
 package com.bjjh.MessMan.model
 
 import java.io.File
+import java.net.URI
 import java.text.SimpleDateFormat
 import java.util.{Date, TimerTask}
 
 import com.bjjh.MessMan.main.start._
 import com.bjjh.MessMan.util.{DownloadDataTransferListener, UploadDataTransferListener}
 import it.sauronsoftware.ftp4j.{FTPClient, FTPFile}
+import org.apache.hadoop.conf.Configuration
+import org.apache.hadoop.fs.{FileSystem, Path}
 
 class MainTimerTask extends TimerTask {
 
@@ -77,11 +80,12 @@ class MainTimerTask extends TimerTask {
         util.insert(taskMessLog)
         logger.info("The file ==>" + file.getName + " transfer log has been recorded.")
 
-        /*
+
         //建立hadoop的HDFS链接
         val fs = FileSystem.get(URI.create(configMess.getHdfsURI), new Configuration, configMess.getHdfsUserName)
         logger.info("HDFS URI:" + configMess.getHdfsURI() + " .HDFS username:" + configMess.getHdfsUserName + " is successfully connected.")
-        val fspath = new Path(configMess.getHdfsPath() + File.separator + configMess.getTimestamp())
+//        val fspath = new Path(configMess.getHdfsPath() + File.separator + configMess.getTimestamp())
+        val fspath = new Path(configMess.getHdfsPath())
         val hdfsfilename = new Path(fspath + File.separator + file.getName + "." + configMess.getTimestamp() + ".data")
         val localfilename = new Path(configMess.getFTPFileSavePath() + File.separator + configMess.getToday() + File.separator + file.getName + ".data")
 
@@ -99,7 +103,7 @@ class MainTimerTask extends TimerTask {
         }
         fs.close()
         logger.info("HDFS closed.")
-        */
+
       }
     }
     logger.info("====================The first phase is over.====================")
