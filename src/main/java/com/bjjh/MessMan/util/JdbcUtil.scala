@@ -37,7 +37,7 @@ class JdbcUtil {
   }
 
   def output(path: String, filename: String): Unit = {
-    val sql = "SELECT bwnumber,expirytime,bwclass,optype INTO OUTFILE '" + path + "/" + filename + "' fields TERMINATED BY '\t' OPTIONALLY ENCLOSED BY '' lines TERMINATED BY '\n' FROM test.policy_bwlist"
+    val sql = "SELECT bwnumber,expirytime,bwclass,optype INTO OUTFILE '" + path + "/" + filename + "' fields TERMINATED BY '\t' OPTIONALLY ENCLOSED BY '' lines TERMINATED BY '\n' FROM test.POLICY_BWLIST"
     val ptst = getConnection().prepareStatement(sql)
     ptst.execute()
     ptst.close()
@@ -45,7 +45,7 @@ class JdbcUtil {
   }
 
   def count(): Long = {
-    val sql = "SELECT COUNT(1) FROM test.policy_bwlist"
+    val sql = "SELECT COUNT(1) FROM test.POLICY_BWLIST"
     val ptst = getConnection().prepareStatement(sql)
     val set = ptst.executeQuery()
     var count = 0

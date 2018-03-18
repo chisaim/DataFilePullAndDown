@@ -1,45 +1,32 @@
 package com.bjjh.MessMan;
 
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.URI;
-import java.net.URISyntaxException;
-
 import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.fs.BlockLocation;
-import org.apache.hadoop.fs.FSDataInputStream;
-import org.apache.hadoop.fs.FSDataOutputStream;
-import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.io.IOUtils;
-import org.apache.hadoop.mapred.JobConf;
-import org.apache.log4j.Logger;
+import org.junit.Test;
 
-/**
- * 利用HDFS java API操作文件
- */
-class HdfsDAO {
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+
+public class TestHdfs {
+
 
     public static void main(String[] args) {
-
         FileSystem fs = null;
-
         String hdfsUserName = "hadoop";
-
         Configuration configuration = new Configuration();
-
         URI uri = null;
-
         try {
             uri = new URI("hdfs://192.168.102.75:9000");
         } catch (URISyntaxException e) {
             e.printStackTrace();
         }
-
         try {
             fs = FileSystem.get(uri, configuration, hdfsUserName);
         } catch (IOException e) {
@@ -60,20 +47,17 @@ class HdfsDAO {
 
         Path HDFSPath = new Path("/data/new.txt");
         Path LocalPath = new Path("D:\\Download\\SogouQ3.txt\\new.txt");
-
         try {
-            fs.copyFromLocalFile(LocalPath,HDFSPath);
+            fs.copyFromLocalFile(LocalPath, HDFSPath);
         } catch (IOException e) {
             e.printStackTrace();
-        }finally {
+        } finally {
             try {
                 fs.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
-
-
     }
 
 }

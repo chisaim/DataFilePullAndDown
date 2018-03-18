@@ -3,10 +3,15 @@ package com.bjjh.MessMan;
 import com.bjjh.MessMan.config.GetConfigMess;
 import com.bjjh.MessMan.util.DownloadDataTransferListener;
 import it.sauronsoftware.ftp4j.*;
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FileSystem;
+import org.apache.hadoop.fs.Path;
 import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 public class TestFtp {
     @Test
@@ -55,4 +60,5 @@ public class TestFtp {
         }
 
     }
+
 }
